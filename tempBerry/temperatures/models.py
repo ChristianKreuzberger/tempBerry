@@ -30,6 +30,13 @@ class TemperatureDataEntry(DataEntry):
 
     battery = models.SmallIntegerField()
 
+    def __str__(self):
+        return "{sensor_id}: {temperature} °C, {humidity} %".format(
+            sensor_id=self.sensor_id,
+            temperature=self.temperature,
+            humidity=self.humidity
+        )
+
 
 class UnknownDataEntry(DataEntry):
     raw_data = models.TextField()
