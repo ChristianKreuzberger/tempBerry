@@ -21,6 +21,9 @@ class DataEntry(models.Model):
 
 
 class TemperatureDataEntry(DataEntry):
+    class Meta:
+        ordering=('sensor_id', 'created_at')
+
     sensor_id = models.IntegerField(
         db_index=True
     )

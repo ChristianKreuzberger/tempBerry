@@ -4,3 +4,4 @@ db.sqlite3
 __pycache__
 *.pyc
 tempBerry/tempBerry/settings/live.py
+htdocs/

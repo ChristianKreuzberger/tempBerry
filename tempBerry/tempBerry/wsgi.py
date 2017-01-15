@@ -13,9 +13,9 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ['LANG']='en_US.UTF-8'
-os.environ['LC_ALL']='en_US.UTF-8'
+os.environ['LANG'] = 'en_US.UTF-8'
+os.environ['LC_ALL'] = 'en_US.UTF-8'
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tempBerry.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tempBerry.settings.live")
 
 application = get_wsgi_application()
