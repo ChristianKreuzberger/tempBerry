@@ -6,6 +6,8 @@ from rest_framework.decorators import list_route
 from rest_framework.response import Response
 from django.db.models import Avg, Max, Min
 from datetime import datetime, timedelta
+from django.utils import timezone
+
 
 
 class TemperatureDataEntryViewSet(viewsets.ModelViewSet):
@@ -14,18 +16,18 @@ class TemperatureDataEntryViewSet(viewsets.ModelViewSet):
     filter_fields = ('sensor_id', )
 
     def get_queryset(self):
-        end_date = datetime.now()
+        end_date = timezone.now()
         start_date = end_date - timedelta(hours=96)
         return TemperatureDataEntry.objects.filter(
-            date__range=(start_date, end_date)
+            created_at__range=(start_date, end_date)
         )
 
     def get_aggregates_24h(self, sensor_id):
-        end_date = datetime.now()
+        end_date = timezone.now()
         start_date = end_date - timedelta(hours=24)
         qs = TemperatureDataEntry.objects.filter(
             sensor_id=sensor_id,
-            date__range=(start_date, end_date)
+            created_at__range=(start_date, end_date)
         ).aggregate(
             max_temperature=Max('temperature'),
             min_temperature=Min('temperature'),
