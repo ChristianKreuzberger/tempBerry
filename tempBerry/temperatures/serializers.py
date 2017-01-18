@@ -1,5 +1,4 @@
 from temperatures.models import TemperatureDataEntry, UnknownDataEntry
-
 from rest_framework import serializers
 
 

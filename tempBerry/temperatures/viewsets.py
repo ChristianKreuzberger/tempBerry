@@ -4,13 +4,36 @@ from rest_framework import viewsets
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import list_route
 from rest_framework.response import Response
+from django.db.models import Avg, Max, Min
+from datetime import datetime, timedelta
 
 
 class TemperatureDataEntryViewSet(viewsets.ModelViewSet):
     serializer_class = TemperatureDataEntrySerializer
-    queryset = TemperatureDataEntry.objects.all()
     filter_backends = (DjangoFilterBackend,)
     filter_fields = ('sensor_id', )
+
+    def get_queryset(self):
+        end_date = datetime.now()
+        start_date = end_date - timedelta(hours=96)
+        return TemperatureDataEntry.objects.filter(
+            date__range=(start_date, end_date)
+        )
+
+    def get_aggregates_24h(self, sensor_id):
+        end_date = datetime.now()
+        start_date = end_date - timedelta(hours=24)
+        qs = TemperatureDataEntry.objects.filter(
+            sensor_id=sensor_id,
+            date__range=(start_date, end_date)
+        ).aggregate(
+            max_temperature=Max('temperature'),
+            min_temperature=Min('temperature'),
+            avg_temperature=Avg('temperature'),
+            max_humidty=Max('humidity'),
+            min_humidty=Min('humidity'),
+            avg_humidty=Avg('humidity'),
+        )
 
     @list_route(methods=['GET'])
     def latest(self, request):
