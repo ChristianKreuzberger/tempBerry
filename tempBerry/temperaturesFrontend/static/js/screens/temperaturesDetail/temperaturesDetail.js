@@ -26,11 +26,11 @@
         vm.chartOptions =  {
             chart: {
                 type: 'lineChart',
-                height: 450,
+                height: '800',
                 margin : {
                     top: 20,
                     right: 20,
-                    bottom: 40,
+                    bottom: 100,
                     left: 55
                 },
                 x: function(d){ return moment(d.created_at); },
@@ -45,9 +45,9 @@
                 xAxis: {
                     axisLabel: 'Time (h)',
                     tickFormat: function(d) {
-                        return d3.time.format('%x')(new Date(d))
+                        return d3.time.format('%x %I:%M')(new Date(d))
                     },
-                    rotateLabels: 30,
+                    rotateLabels: 45,
                     showMaxMin: false
                 },
                 yAxis: {
