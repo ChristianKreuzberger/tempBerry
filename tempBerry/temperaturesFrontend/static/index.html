@@ -5,45 +5,38 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <script src="node_modules/moment/moment.js"></script>
+
     <!-- Include Angular and several angular libraries -->
     <script src="node_modules/angular/angular.js"></script>
     <script src="node_modules/angular-resource/angular-resource.js"></script>
+    <script src="node_modules/angular-ui-router/release/angular-ui-router.js"></script>
+
+    <script src="node_modules/d3/d3.js"></script>
+    <script src="node_modules/nvd3/build/nv.d3.js"></script> <!-- or use another assembly -->
+    <script src="node_modules/angular-nvd3/dist/angular-nvd3.js"></script>
+    <link rel="stylesheet" href="node_modules/nvd3/build/nv.d3.css">
+
+
+    <!-- Include our app config -->
+    <script src="js/app.js"></script>
+
+    <!-- Include our Services -->
+    <script src="js/services/temperaturesRest.js"></script>
+
+    <!-- Include our Scripts -->
+    <script src="js/screens/temperaturesDashboard/temperaturesDashboard.js"></script>
+    <script src="js/screens/temperaturesDetail/temperaturesDetail.js"></script>
 
     <link rel="stylesheet" type="text/css" href="node_modules/bootstrap/dist/css/bootstrap.css">
 
     <!-- Include our app -->
-    <script src="js/app.js"></script>
+
 </head>
-<body>
+<body ng-app="app">
 
-<div class="container" ng-app="app" ng-controller="MainCtrl">
-    <h3>Temperatures</h3>
-    <div class="row">
-        <div class="col-xs-12 col-sm-6"  ng-repeat="entry in response">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">{{ entry.sensor_id }}</h3>
-                </div>
-                <div class="panel-body">
-                    <div class="row">
-                        <div class="col-xs-12">
-                            {{  entry.temperature }} °C / {{  entry.humidity }} %
-                        </div>
-                        <div class="col-xs-12 text-right" style="font-size: 8pt">
-                            Last updated: {{  entry.created_at  }}
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-    </div>
-    <b>IDs</b><br />
-    20 = Arbeitszimmer<br />
-    37 = Au&szlig;ensensor<br />
-    53 = Schlafzimmer<br />
-    92 = Badezimmer
-
+<div class="container">
+    <ui-view></ui-view>
 </div>
 
 </body>
