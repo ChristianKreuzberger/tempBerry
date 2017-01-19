@@ -47,7 +47,7 @@ class TemperatureDataEntryViewSet(viewsets.ModelViewSet):
         sensor_ids = []
 
         for entry in list:
-            if entry['sensor_id'] in sensor_ids or entry['sensor_id'] == '0':
+            if entry['sensor_id'] in sensor_ids or entry['sensor_id'] == '0' or entry['sensor_id'] == 0:
                 continue
             sensor_ids.append(entry['sensor_id'])
             qs = qs | TemperatureDataEntry.objects.filter(created_at=entry['created_at'], sensor_id=entry['sensor_id'])

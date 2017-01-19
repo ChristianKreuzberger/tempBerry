@@ -1,3 +1,8 @@
 <h3>Details for Sensor {{ vm.sensorId }}</h3>
 
-<nvd3 options="vm.chartOptions" data="vm.data" class="with-3d-shadow with-transitions"></nvd3>
+<a ui-sref="main">Back</a>
+
+<div ng-show="!vm.data || vm.data.length == 0">
+    Please wait
+</div>
+<nvd3 ng-if="vm.data && vm.data.length > 0" options="vm.chartOptions" data="vm.data" class="with-3d-shadow with-transitions"></nvd3>

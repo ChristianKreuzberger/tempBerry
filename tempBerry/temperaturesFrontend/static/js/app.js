@@ -9,12 +9,15 @@ var app = angular.module('app', [
 ]);
 
 
-app.config(function($resourceProvider, $stateProvider) {
+app.config(function($resourceProvider, $urlRouterProvider, $stateProvider) {
   $resourceProvider.defaults.stripTrailingSlashes = false;
+
+  $urlRouterProvider.otherwise('/');
+
 
   $stateProvider.state(
       'main', {
-          url: '',
+          url: '/',
           component: 'temperaturesDashboard'
       }
   ).state(

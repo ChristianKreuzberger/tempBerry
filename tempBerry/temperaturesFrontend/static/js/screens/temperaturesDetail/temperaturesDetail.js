@@ -95,6 +95,9 @@
                 var temperatures = [];
                 var humidities = [];
 
+                var min_y = 99;
+                var max_y = -99;
+
                 for (var i = 0; i < response.length; i++) {
                     if (i % 3) {
                         temperatures.push(
@@ -109,8 +112,24 @@
                                 y: response[i].humidity
                             }
                         );
+
+                        // check min/max values
+                        if (response[i].temperature > max_y) {
+                            max_y = response[i].temperature;
+                        }
+                        if (response[i].temperature < min_y) {
+                            min_y = response[i].temperature;
+                        }
+                        if (response[i].humidity > max_y) {
+                            max_y = response[i].humidity;
+                        }
+                        if (response[i].humidity < min_y) {
+                            min_y = response[i].humidity;
+                        }
                     }
                 }
+                // determine min/max values
+                vm.chartOptions.chart.yDomain = [min_y-10, max_y+10];
 
                 vm.data = [
                     {
