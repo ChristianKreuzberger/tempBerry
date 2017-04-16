@@ -3,13 +3,24 @@ A running pilight-daemon is neededed.
 """
 
 import time
+import traceback
+import sys
 import requests
 from datetime import datetime
 from pilight import pilight
 
 
 def post_data(data):
-    r = requests.post("http://tempberry.chkr.at/api/temperatures/", data)
+
+    with requests.Session() as s:
+        try:
+            r = s.post("https://tempberry.chkr.at/api/temperatures/", data)
+        except:
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            lines = traceback.format_exception(exc_type, exc_value, exc_traceback)
+            print(datetime.now(), "post_data(): An error occured")
+            print(''.join('!! ' + line for line in lines))
+
     return r
 
 

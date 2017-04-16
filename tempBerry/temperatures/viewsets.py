@@ -1,16 +1,21 @@
-from temperatures.models import TemperatureDataEntry, UnknownDataEntry
-from temperatures.serializers import TemperatureDataEntrySerializer
+from datetime import datetime, timedelta
+from django.db.models import Avg, Max, Min
+from django.utils import timezone
+from django.core.cache import cache
+
 from rest_framework import viewsets
-from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import list_route
 from rest_framework.response import Response
-from django.db.models import Avg, Max, Min
-from datetime import datetime, timedelta
-from django.utils import timezone
+from django_filters.rest_framework import DjangoFilterBackend
 
+from temperatures.models import TemperatureDataEntry, UnknownDataEntry
+from temperatures.serializers import TemperatureDataEntrySerializer
 
 
 class TemperatureDataEntryViewSet(viewsets.ModelViewSet):
+    """
+    Viewset for temperature data
+    """
     serializer_class = TemperatureDataEntrySerializer
     filter_backends = (DjangoFilterBackend,)
     filter_fields = ('sensor_id', )
@@ -38,7 +43,7 @@ class TemperatureDataEntryViewSet(viewsets.ModelViewSet):
         )
 
     @list_route(methods=['GET'])
-    def latest(self, request):
+    def latest_old(self, request):
         # get all sensor ids
         list = TemperatureDataEntry.objects.order_by('-created_at', 'sensor_id').values('created_at', 'sensor_id')[:20]
 
@@ -54,3 +59,22 @@ class TemperatureDataEntryViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(qs, many=True)
         return Response(serializer.data)
+
+
+    @list_route(methods=['GET'])
+    def latest(self, request):
+        """
+        Display latest data by reading the django cache last_temperature_data
+        :param request:
+        :return:
+        """
+        cached_data = cache.get('last_temperature_data')
+
+        if not cached_data:
+            data = [{'sensor_id': 0, 'error': "Not ready"}]
+            return Response(data)
+
+        serializer = self.get_serializer(cached_data.values(), many=True)
+        return Response(serializer.data)
+
+

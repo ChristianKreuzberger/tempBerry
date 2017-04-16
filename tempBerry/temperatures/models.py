@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.core.cache import cache
 
 
 class DataEntry(models.Model):
@@ -41,6 +44,24 @@ class TemperatureDataEntry(DataEntry):
             humidity=self.humidity
         )
 
+@receiver(post_save, sender=TemperatureDataEntry)
+def update_last_temperature_data_in_cache(instance, *args, **kwargs):
+    """
+    Stores the latest temperature data in django cache
+    :param instance:
+    :param args:
+    :param kwargs:
+    :return:
+    """
+    cached_data = cache.get('last_temperature_data')
+    if not cached_data:
+        cached_data = dict()
+
+    cached_data[instance.sensor_id] = instance
+
+    cache.set('last_temperature_data', cached_data)
 
 class UnknownDataEntry(DataEntry):
     raw_data = models.TextField()
+
+
