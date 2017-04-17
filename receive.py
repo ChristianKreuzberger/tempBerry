@@ -35,13 +35,18 @@ def handle_code(code):  # Simply  print received data from pilight
         if last_code == code['message']:
             return
 
+        # ignore if sensor id is 0 (most likely a wrong sensor reading)
+        if code['message']['id'] == 0:
+            print(datetime.now(), "Skipping sensor id 0")
+            return
+
         print(datetime.now(), code['protocol'], "Id: %(id)s Temp: %(temperature)s %(humidity)s" % code['message'])
 
         # Post data to REST API
         post_data(
             {
                 'sensor_id': code['message']['id'], 'temperature': code['message']['temperature'],
-                'humidity': code['message']['humidity'], 'battery': '0', 'source': 'raspberry'
+                'humidity': code['message']['humidity'], 'battery': code['message']['battery'], 'source': 'raspberry'
             }
         )
 
@@ -64,6 +69,6 @@ if __name__ == '__main__':
     pilight_client.start()  # Start the receiver
 
     # You have 10 seconds to print all the data the pilight-daemon receives
-    time.sleep(10000)
+    time.sleep(1000000)
     pilight_client.stop()  # Stop the receiver
 

@@ -29,6 +29,8 @@
                 return "Schlafzimmer";
             } else if (deviceId == 92) {
                 return "Badezimmer";
+            } else if (deviceId == 215) {
+                return "Gästezimmer";
             }
             return "Unbekannt";
         };
