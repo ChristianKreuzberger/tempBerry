@@ -15,13 +15,14 @@ def post_data(data):
     with requests.Session() as s:
         try:
             r = s.post("https://tempberry.chkr.at/api/temperatures/", data)
+            return r
         except:
             exc_type, exc_value, exc_traceback = sys.exc_info()
             lines = traceback.format_exception(exc_type, exc_value, exc_traceback)
             print(datetime.now(), "post_data(): An error occured")
             print(''.join('!! ' + line for line in lines))
 
-    return r
+    return None
 
 
 last_code = None
@@ -69,6 +70,6 @@ if __name__ == '__main__':
     pilight_client.start()  # Start the receiver
 
     # You have 10 seconds to print all the data the pilight-daemon receives
-    time.sleep(1000000)
+    time.sleep(100000000)
     pilight_client.stop()  # Stop the receiver
 
