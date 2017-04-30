@@ -99,7 +99,7 @@
                 var max_y = -99;
 
                 for (var i = 0; i < response.length; i++) {
-                    if (i % 3) {
+                    if (i % 5) {
                         temperatures.push(
                             {
                                 x: moment(response[i].created_at),

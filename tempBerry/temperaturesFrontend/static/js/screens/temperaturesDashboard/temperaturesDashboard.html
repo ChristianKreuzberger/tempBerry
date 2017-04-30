@@ -1,9 +1,9 @@
 <h3>Temperatures</h3>
 <div class="row">
-    <div class="col-xs-12 col-sm-6"  ng-repeat="entry in vm.response">
+    <div class="col-xs-12 col-sm-6"  ng-repeat="entry in vm.entries | orderBy: 'room_name'">
         <div class="panel panel-default" ui-sref="detail({sensorId: entry.sensor_id})" role="button">
             <div class="panel-heading">
-                <h3 class="panel-title">{{ vm.deviceIdToRoomName(entry.sensor_id) }} ({{ entry.sensor_id }})</h3>
+                <h3 class="panel-title">{{ entry.room_name }} ({{ entry.sensor_id }})</h3>
             </div>
             <div class="panel-body">
                 <div class="row">
@@ -21,8 +21,3 @@
         </div>
     </div>
 </div>
-<b>IDs</b><br />
-20 = Arbeitszimmer<br />
-37 = Au&szlig;ensensor<br />
-53 = Schlafzimmer<br />
-92 = Badezimmer

@@ -47,11 +47,17 @@
             $timeout.cancel(timer);
         });
 
-        vm.response = [];
+        vm.entries = [];
 
         vm.getdata = function() {
             temperaturesRestService.getLatest().$promise.then(function (response) {
-                vm.response = response;
+                // iterate over all response data
+                for (var i = 0; i < response.length; i++) {
+                    var entry = response[i];
+                    entry.room_name = vm.deviceIdToRoomName(entry.sensor_id);
+                }
+
+                vm.entries = response;
             });
 
             timer = $timeout(vm.getdata, 5000);

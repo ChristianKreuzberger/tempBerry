@@ -3,6 +3,9 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.cache import cache
+from django.utils.timezone import datetime
+from django.utils.timezone import timedelta
+from django.utils.timezone import utc
 
 
 class DataEntry(models.Model):
@@ -44,6 +47,7 @@ class TemperatureDataEntry(DataEntry):
             humidity=self.humidity
         )
 
+
 @receiver(post_save, sender=TemperatureDataEntry)
 def update_last_temperature_data_in_cache(instance, *args, **kwargs):
     """
@@ -58,6 +62,20 @@ def update_last_temperature_data_in_cache(instance, *args, **kwargs):
         cached_data = dict()
 
     cached_data[instance.sensor_id] = instance
+
+    now = datetime.utcnow().replace(tzinfo=utc)
+
+    keys_to_remove = []
+
+    # iterate over all data in cached_data and remove entries older than 12 hours
+    for key, entry in cached_data.items():
+        timediff = now - entry.created_at
+        seconds = timediff.total_seconds()
+        if seconds > 60*60*12:
+            keys_to_remove.append(key)
+
+    for k in keys_to_remove:
+        del cached_data[k]
 
     cache.set('last_temperature_data', cached_data)
 
