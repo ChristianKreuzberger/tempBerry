@@ -67,11 +67,11 @@ def update_last_temperature_data_in_cache(instance, *args, **kwargs):
 
     keys_to_remove = []
 
-    # iterate over all data in cached_data and remove entries older than 12 hours
+    # iterate over all data in cached_data and remove entries older than 3 hours
     for key, entry in cached_data.items():
         timediff = now - entry.created_at
         seconds = timediff.total_seconds()
-        if seconds > 60*60*12:
+        if seconds > 60*60*3:
             keys_to_remove.append(key)
 
     for k in keys_to_remove:
