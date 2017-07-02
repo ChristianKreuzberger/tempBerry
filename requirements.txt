@@ -1,6 +1,6 @@
-Django==1.10.5
-django-crispy-forms==1.6.1
-django-filter==1.0.1
-djangorestframework==3.5.3
-Markdown==2.6.7
+Django>=1.11,<1.12
+django-crispy-forms>=1.6.1
+django-filter>=1.0.1
+djangorestframework>=3.6,<3.8
+Markdown>=2.6.7
 PyMySQL==0.7.9

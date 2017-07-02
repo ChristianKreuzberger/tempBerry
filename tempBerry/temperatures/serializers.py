@@ -6,4 +6,4 @@ class TemperatureDataEntrySerializer(serializers.ModelSerializer):
     class Meta:
         model = TemperatureDataEntry
         fields = ('id', 'sensor_id', 'temperature', 'humidity', 'created_at', 'source', 'battery')
-        readonly_fields = ('created_at', )
+        read_only_fields = ('created_at', )

@@ -32,14 +32,20 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    # django stuff
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # rest framework
     'rest_framework',
     'crispy_forms',
+    'django_filters',
+
+    # tempberry
     'temperatures',
     'temperaturesFrontend'
 ]
@@ -137,5 +143,5 @@ STATIC_ROOT = os.path.join(BASE_DIR, '..', '..', 'htdocs')
 
 
 REST_FRAMEWORK = {
-    'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
+    #'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
 }
