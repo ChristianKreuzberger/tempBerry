@@ -4,3 +4,4 @@ django-filter>=1.0.1
 djangorestframework>=3.6,<3.8
 Markdown>=2.6.7
 PyMySQL==0.7.9
+django-redis-cache>=1.7,<1.8
