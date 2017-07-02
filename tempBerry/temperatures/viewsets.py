@@ -4,12 +4,12 @@ from django.utils import timezone
 from django.core.cache import cache
 
 from rest_framework import viewsets
-from rest_framework.decorators import list_route
+from rest_framework.decorators import list_route, detail_route
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 
-from temperatures.models import TemperatureDataEntry, UnknownDataEntry
-from temperatures.serializers import TemperatureDataEntrySerializer
+from temperatures.models import TemperatureDataEntry, UnknownDataEntry, Room
+from temperatures.serializers import TemperatureDataEntrySerializer, RoomSerializer
 
 
 class TemperatureDataEntryViewSet(viewsets.ModelViewSet):
@@ -43,25 +43,6 @@ class TemperatureDataEntryViewSet(viewsets.ModelViewSet):
         )
 
     @list_route(methods=['GET'])
-    def latest_old(self, request):
-        # get all sensor ids
-        list = TemperatureDataEntry.objects.order_by('-created_at', 'sensor_id').values('created_at', 'sensor_id')[:20]
-
-        qs = TemperatureDataEntry.objects.none()
-
-        sensor_ids = []
-
-        for entry in list:
-            if entry['sensor_id'] in sensor_ids or entry['sensor_id'] == '0' or entry['sensor_id'] == 0:
-                continue
-            sensor_ids.append(entry['sensor_id'])
-            qs = qs | TemperatureDataEntry.objects.filter(created_at=entry['created_at'], sensor_id=entry['sensor_id'])
-
-        serializer = self.get_serializer(qs, many=True)
-        return Response(serializer.data)
-
-
-    @list_route(methods=['GET'])
     def latest(self, request):
         """
         Display latest data by reading the django cache last_temperature_data
@@ -78,3 +59,75 @@ class TemperatureDataEntryViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
+class RoomDataViewSet(viewsets.ModelViewSet):
+    """
+    Viewset for room
+    """
+    serializer_class = RoomSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields = ('sensor_id',)
+    queryset = Room.objects.all()
+
+    @detail_route(methods=['GET'])
+    def stats(self, request, pk):
+        """ return some stats of this room """
+        # find the first and last entry of this room
+        room = Room.objects.get(pk=pk)
+
+        latest_entry = room.temperaturedataentry_set.all().latest("created_at")
+
+        cnt = room.temperaturedataentry_set.count()
+
+        avg = room.temperaturedataentry_set.all().aggregate(
+            Avg('temperature'),
+            Avg('humidity')
+        )
+
+        data = {
+            'latest': TemperatureDataEntrySerializer(latest_entry).data,
+            'avg_temperature': avg['temperature__avg'],
+            'avg_humidity': avg['humidity__avg'],
+            'cnt': cnt
+        }
+
+        return Response(data)
+
+    @detail_route(methods=['GET'])
+    def aggregates_24h(self, request, pk):
+        end_date = timezone.now()
+        start_date = end_date - timedelta(hours=24)
+
+        room = Room.objects.get(pk=pk)
+
+        qs = room.temperaturedataentry_set.filter(
+            created_at__range=(start_date, end_date)
+        ).aggregate(
+            max_temperature=Max('temperature'),
+            min_temperature=Min('temperature'),
+            avg_temperature=Avg('temperature'),
+            max_humidty=Max('humidity'),
+            min_humidty=Min('humidity'),
+            avg_humidty=Avg('humidity'),
+        )
+
+        return Response(qs)
+
+    @detail_route(methods=['GET'])
+    def aggregates_1month(self, request, pk):
+        end_date = timezone.now()
+        start_date = end_date - timedelta(weeks=4)
+
+        room = Room.objects.get(pk=pk)
+
+        qs = room.temperaturedataentry_set.filter(
+            created_at__range=(start_date, end_date)
+        ).aggregate(
+            max_temperature=Max('temperature'),
+            min_temperature=Min('temperature'),
+            avg_temperature=Avg('temperature'),
+            max_humidty=Max('humidity'),
+            min_humidty=Min('humidity'),
+            avg_humidty=Avg('humidity'),
+        )
+
+        return Response(qs)
