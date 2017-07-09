@@ -1,13 +1,19 @@
-var screens = angular.module('screens', []);
-var services = angular.module('services', []);
+"use strict";
+
+// define modules
+angular.module('screens', []);
+angular.module('services', []);
+angular.module('widgets', []);
+
+// define app module
 var app = angular.module('app', [
     'ngResource',
     'ui.router',
     'nvd3',
     'screens',
-    'services'
+    'services',
+    'widgets'
 ]);
-
 
 app.config(function($resourceProvider, $urlRouterProvider, $stateProvider) {
   $resourceProvider.defaults.stripTrailingSlashes = false;

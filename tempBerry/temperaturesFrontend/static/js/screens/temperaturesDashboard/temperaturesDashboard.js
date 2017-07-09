@@ -18,25 +18,6 @@
             vm = this,
             timer = undefined;
 
-
-        vm.deviceIdToRoomName = function(deviceId) {
-
-            if (deviceId == 20) {
-                return "Arbeitszimmer";
-            } else if (deviceId == 37) {
-                return "Außensensor";
-            } else if (deviceId == 53) {
-                return "Schlafzimmer";
-            } else if (deviceId == 92) {
-                return "Badezimmer";
-            } else if (deviceId == 215) {
-                return "Gästezimmer";
-            }
-            return "Unbekannt";
-        };
-
-
-
         var init = function() {
 
         };
@@ -51,12 +32,6 @@
 
         vm.getdata = function() {
             temperaturesRestService.getLatest().$promise.then(function (response) {
-                // iterate over all response data
-                for (var i = 0; i < response.length; i++) {
-                    var entry = response[i];
-                    entry.room_name = vm.deviceIdToRoomName(entry.sensor_id);
-                }
-
                 vm.entries = response;
             });
 

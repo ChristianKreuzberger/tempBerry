@@ -37,9 +37,9 @@ class TemperatureDataEntryViewSet(viewsets.ModelViewSet):
             max_temperature=Max('temperature'),
             min_temperature=Min('temperature'),
             avg_temperature=Avg('temperature'),
-            max_humidty=Max('humidity'),
-            min_humidty=Min('humidity'),
-            avg_humidty=Avg('humidity'),
+            max_humidity=Max('humidity'),
+            min_humidity=Min('humidity'),
+            avg_humidity=Avg('humidity'),
         )
 
     @list_route(methods=['GET'])
@@ -105,9 +105,9 @@ class RoomDataViewSet(viewsets.ModelViewSet):
             max_temperature=Max('temperature'),
             min_temperature=Min('temperature'),
             avg_temperature=Avg('temperature'),
-            max_humidty=Max('humidity'),
-            min_humidty=Min('humidity'),
-            avg_humidty=Avg('humidity'),
+            max_humidity=Max('humidity'),
+            min_humidity=Min('humidity'),
+            avg_humidity=Avg('humidity'),
         )
 
         return Response(qs)
@@ -125,9 +125,9 @@ class RoomDataViewSet(viewsets.ModelViewSet):
             max_temperature=Max('temperature'),
             min_temperature=Min('temperature'),
             avg_temperature=Avg('temperature'),
-            max_humidty=Max('humidity'),
-            min_humidty=Min('humidity'),
-            avg_humidty=Avg('humidity'),
+            max_humidity=Max('humidity'),
+            min_humidity=Min('humidity'),
+            avg_humidity=Avg('humidity'),
         )
 
         return Response(qs)

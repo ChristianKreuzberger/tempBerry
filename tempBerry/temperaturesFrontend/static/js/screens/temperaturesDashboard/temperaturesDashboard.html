@@ -1,23 +1,6 @@
 <h3>Temperatures</h3>
 <div class="row">
     <div class="col-xs-12 col-sm-6"  ng-repeat="entry in vm.entries | orderBy: 'room_name'">
-        <div class="panel panel-default" ui-sref="detail({sensorId: entry.sensor_id})" role="button">
-            <div class="panel-heading">
-                <h3 class="panel-title">{{ entry.room_name }} ({{ entry.sensor_id }})</h3>
-            </div>
-            <div class="panel-body">
-                <div class="row">
-                    <div class="col-xs-12">
-                        {{  entry.temperature }} °C / {{  entry.humidity }} %
-                        <i ng-show="entry.battery == '1.0'" class="fa fa-battery-quarter" aria-hidden="true" title="Battery might be empty"></i>
-
-                    </div>
-                    <div class="col-xs-12 text-right" style="font-size: 8pt">
-                        Last updated: {{  entry.created_at | date:'HH:mm dd-MM-yyyy' }}
-                    </div>
-                </div>
-
-            </div>
-        </div>
+        <room-detail entry="entry"></room-detail>
     </div>
 </div>

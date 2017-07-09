@@ -13,13 +13,18 @@
         }
     });
 
-    module.controller('TemperaturesDetailController', function($scope, temperaturesRestService) {
+    module.controller('TemperaturesDetailController', function($scope, $timeout, temperaturesRestService, roomsRestService) {
 
         var
-            vm = this;
+            vm = this,
+            timer = null;
 
 
         vm.data = [];
+
+        vm.entry = {};
+
+        vm.stats = {};
 
         vm.chartOptions =  {
             chart: {
@@ -88,6 +93,49 @@
             //     }
             // }
         };
+
+        $scope.$on('$destroy', function() {
+            $timeout.cancel(timer);
+        });
+
+        vm.getdata = function() {
+            temperaturesRestService.getLatest().$promise.then(function (response) {
+                // iterate over all response data
+                for (var i = 0; i < response.length; i++) {
+                    var entry = response[i];
+                    if (entry.sensor_id == vm.sensorId) {
+                        vm.entry = entry;
+                        return;
+                    }
+                }
+            });
+
+            timer = $timeout(vm.getdata, 30000);
+        };
+
+        vm.getdata();
+
+
+
+        vm.getStatistics = function() {
+            roomsRestService.query({'sensor_id': vm.sensorId}).$promise.then(
+                function success(response) {
+                    if (response && response.length == 1) {
+                        var room = response[0];
+                        room.$getAggregates24h().then(
+                            function success(response) {
+                                console.log(response);
+                                vm.stats = response;
+                            }
+                        )
+                    }
+                }
+            )
+        };
+
+        vm.getStatistics();
+
+
 
 
         temperaturesRestService.query({'sensor_id': vm.sensorId}).$promise.then(
