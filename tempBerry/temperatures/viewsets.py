@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 
 from temperatures.models import TemperatureDataEntry, UnknownDataEntry, Room
-from temperatures.serializers import TemperatureDataEntrySerializer, RoomSerializer
+from temperatures.serializers import TemperatureDataEntrySerializer, RoomSerializer, RoomLiveDataSerializer
 
 
 class TemperatureDataEntryViewSet(viewsets.ModelViewSet):
@@ -67,6 +67,34 @@ class RoomDataViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filter_fields = ('sensor_id',)
     queryset = Room.objects.all()
+
+    @list_route(methods=['GET'])
+    def latest(self, request):
+        """
+        Display latest data by reading the django cache last_temperature_data
+        :param request:
+        :return:
+        """
+        cached_data = cache.get('last_temperature_data')
+
+        if not cached_data:
+            data = [{'id': 0, 'error': "Not ready"}]
+            return Response(data)
+
+        # get queryset with public rooms only
+        rooms = self.get_queryset().filter(public=True)
+
+        # for each room, check if there are data in cached_data
+        for room in rooms:
+            sensor_id = room.sensor_id
+
+            live_data = cached_data.get(sensor_id, None)
+
+            if live_data:
+                room.live_data = live_data
+
+        serializer = RoomLiveDataSerializer(rooms, many=True)
+        return Response(serializer.data)
 
     @detail_route(methods=['GET'])
     def stats(self, request, pk):

@@ -34,6 +34,11 @@ class Room(models.Model):
         verbose_name="Sensor ID related to this room"
     )
 
+    public = models.BooleanField(
+        verbose_name="Whether this room is public or not",
+        default=False
+    )
+
     def __str__(self):
         return self.name
 
