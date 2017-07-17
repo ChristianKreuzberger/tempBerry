@@ -12,7 +12,7 @@
         }
     });
 
-    module.controller('TemperaturesDashboardController', function($scope, $timeout, temperaturesRestService) {
+    module.controller('TemperaturesDashboardController', function($scope, $timeout, temperaturesRestService, roomsRestService) {
 
         var
             vm = this,
@@ -31,7 +31,7 @@
         vm.entries = [];
 
         vm.getdata = function() {
-            temperaturesRestService.getLatest().$promise.then(function (response) {
+            roomsRestService.getLatest().$promise.then(function (response) {
                 vm.entries = response;
             });
 

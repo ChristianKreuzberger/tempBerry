@@ -14,6 +14,11 @@
                     'url': '/api/rooms/:id/aggregates_24h/',
                     'method': 'GET',
                     'isArray': false
+                },
+                'getLatest': {
+                    'url': '/api/rooms/latest/',
+                    'method': 'GET',
+                    'isArray': true
                 }
             }
         );
