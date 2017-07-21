@@ -98,8 +98,11 @@
             $timeout.cancel(timer);
         });
 
+        /**
+         * Get Latest Data and axtract data of the current sensor id
+         */
         vm.getdata = function() {
-            temperaturesRestService.getLatest().$promise.then(function (response) {
+            roomsRestService.getLatest().$promise.then(function (response) {
                 // iterate over all response data
                 for (var i = 0; i < response.length; i++) {
                     var entry = response[i];

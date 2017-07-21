@@ -35,7 +35,7 @@
                 vm.entries = response;
             });
 
-            timer = $timeout(vm.getdata, 5000);
+            timer = $timeout(vm.getdata, 10000);
         };
 
         vm.getdata();
