@@ -47,6 +47,7 @@ INSTALLED_APPS = [
 
     # tempberry
     'temperatures',
+    'aggregatedTemperatures',
     'temperaturesFrontend'
 ]
 
