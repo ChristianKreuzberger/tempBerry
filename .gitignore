@@ -3,5 +3,6 @@ venv/
 db.sqlite3
 __pycache__
 *.pyc
-tempBerry/tempBerry/settings/live.py
+settings/live.py
+settings/dev.py
 htdocs/
