@@ -46,9 +46,9 @@ INSTALLED_APPS = [
     'django_filters',
 
     # tempberry
-    'temperatures',
-    'aggregatedTemperatures',
-    'temperaturesFrontend'
+    'tempBerry.temperatures',
+    'tempBerry.aggregatedTemperatures',
+    'tempBerry.temperaturesFrontend'
 ]
 
 MIDDLEWARE = [

@@ -1,5 +1,5 @@
-from temperatures.models import TemperatureDataEntry, UnknownDataEntry, Room
 from rest_framework import serializers
+from tempBerry.temperatures.models import TemperatureDataEntry, UnknownDataEntry, Room
 
 
 class TemperatureDataEntrySerializer(serializers.ModelSerializer):

@@ -2,7 +2,10 @@
 venv/
 db.sqlite3
 __pycache__
-*.pyc
-settings/live.py
-settings/dev.py
+**.pyc
+**.pyo
+**/settings/live.py
+**/settings/dev.py
 htdocs/
+dumps/*.sql
+dumps/*.gz

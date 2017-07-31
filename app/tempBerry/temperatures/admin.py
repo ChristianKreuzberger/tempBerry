@@ -1,5 +1,5 @@
 from django.contrib import admin
-from temperatures.models import TemperatureDataEntry, Room
+from tempBerry.temperatures.models import TemperatureDataEntry, Room
 
 
 @admin.register(TemperatureDataEntry)

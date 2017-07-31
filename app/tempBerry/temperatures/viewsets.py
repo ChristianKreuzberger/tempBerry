@@ -8,8 +8,8 @@ from rest_framework.decorators import list_route, detail_route
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 
-from temperatures.models import TemperatureDataEntry, UnknownDataEntry, Room
-from temperatures.serializers import TemperatureDataEntrySerializer, RoomSerializer, RoomLiveDataSerializer
+from tempBerry.temperatures.models import TemperatureDataEntry, UnknownDataEntry, Room
+from tempBerry.temperatures.serializers import TemperatureDataEntrySerializer, RoomSerializer, RoomLiveDataSerializer
 
 
 class TemperatureDataEntryViewSet(viewsets.ModelViewSet):

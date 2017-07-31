@@ -1,0 +1,25 @@
+version: '2'
+
+services:
+  mysql:
+    image: mysql:5.5
+    container_name: db.tempberry.local
+    command: mysqld --user=root --verbose
+    volumes:
+      - ./dbcreation.sql:/tmp/dbcreation.sql
+      - ./import.sh:/tmp/import.sh
+    ports:
+      - "127.0.10.1:3306:3306"
+    volumes:
+    - ./dumps:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_DATABASE: "tempberry"
+      MYSQL_USER: "tempberry"
+      MYSQL_PASSWORD: "tempberry"
+      MYSQL_ROOT_PASSWORD: "tempberry"
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+  redis:
+    hostname: redis.tempberry.local
+    image: redis:2.8
+    ports:
+      - "127.0.10.1:6379:6379"
