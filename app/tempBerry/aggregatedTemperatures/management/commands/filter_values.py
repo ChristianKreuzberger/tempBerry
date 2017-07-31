@@ -3,7 +3,7 @@ from tempBerry.temperatures.models import TemperatureDataEntry
 
 
 class Command(BaseCommand):
-    help = 'Updates the average values in aggregatedTemperatures'
+    help = 'Filters out outliers for each sensor'
 
     def add_arguments(self, parser):
         pass
@@ -34,7 +34,7 @@ class Command(BaseCommand):
                     avg_temperature = sum(temperatures)/len(temperatures)
                     avg_humidity = sum(humidities)/len(humidities)
 
-                    print(last_datetime_date, last_datetime_hour, avg_temperature, avg_humidity)
+                    print("num_entries=", len(temperatures), ", for dates=", last_datetime_date, last_datetime_hour, avg_temperature, avg_humidity)
 
                     # add this to database
 
