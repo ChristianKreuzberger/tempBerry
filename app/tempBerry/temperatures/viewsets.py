@@ -88,10 +88,7 @@ class RoomDataViewSet(viewsets.ModelViewSet):
         for room in rooms:
             sensor_id = room.sensor_id
 
-            live_data = cached_data.get(sensor_id, None)
-
-            if live_data:
-                room.live_data = live_data
+            room.live_data = cached_data.get(sensor_id, None)
 
         serializer = RoomLiveDataSerializer(rooms, many=True)
         return Response(serializer.data)
