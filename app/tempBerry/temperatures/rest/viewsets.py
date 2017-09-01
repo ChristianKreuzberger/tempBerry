@@ -1,15 +1,16 @@
-from datetime import datetime, timedelta
-from django.db.models import Avg, Max, Min
-from django.utils import timezone
-from django.core.cache import cache
+from datetime import timedelta
 
+from django.core.cache import cache
+from django.db.models import Avg, Max, Min, Count
+from django.utils import timezone
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 from rest_framework.decorators import list_route, detail_route
 from rest_framework.response import Response
-from django_filters.rest_framework import DjangoFilterBackend
 
-from tempBerry.temperatures.models import TemperatureDataEntry, UnknownDataEntry, Room
-from tempBerry.temperatures.serializers import TemperatureDataEntrySerializer, RoomSerializer, RoomLiveDataSerializer
+from tempBerry.temperatures.models import TemperatureDataEntry, Room
+from tempBerry.temperatures.rest.serializers import TemperatureDataEntrySerializer, RoomSerializer, \
+    RoomLiveDataSerializer
 
 
 class TemperatureDataEntryViewSet(viewsets.ModelViewSet):
@@ -67,6 +68,26 @@ class RoomDataViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filter_fields = ('sensor_id',)
     queryset = Room.objects.all()
+
+    @list_route(methods=['GET'])
+    def new_rooms(self, request):
+        """
+        Returns rooms that are not public, but have a lot of data
+        :param request:
+        :return:
+        """
+        # get all sensor IDs that have at least 10 entries
+        sensor_ids = TemperatureDataEntry.objects.values('sensor_id').annotate(
+            total=Count('sensor_id')
+        ).order_by('total').filter(total__gte=10).values_list('sensor_id', flat=True)
+
+        # get all rooms that are not public
+        rooms = self.get_queryset().filter(public=False, sensor_id__in=sensor_ids)
+
+        serializer = self.get_serializer(rooms, many=True)
+
+        return Response(serializer.data)
+
 
     @list_route(methods=['GET'])
     def latest(self, request):

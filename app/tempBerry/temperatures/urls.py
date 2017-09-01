@@ -1,6 +1,7 @@
-from rest_framework import routers
 from django.conf.urls import url, include
-from tempBerry.temperatures.viewsets import TemperatureDataEntryViewSet, RoomDataViewSet
+from rest_framework import routers
+
+from tempBerry.temperatures.rest.viewsets import TemperatureDataEntryViewSet, RoomDataViewSet
 
 # initiate router and register all endpoints
 router = routers.DefaultRouter()
