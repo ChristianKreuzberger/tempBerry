@@ -35,15 +35,20 @@ class Command(BaseCommand):
                     avg_temperature = sum(temperatures)/len(temperatures)
                     avg_humidity = sum(humidities)/len(humidities)
 
-                    print("num_entries=", len(temperatures), ", for dates=", last_datetime_date, last_datetime_hour, avg_temperature, avg_humidity)
+                    if len(temperatures) < 5:
+                        # ignore "small" datasets
+                        continue
+
+                    print("Checking outliers for {} {}".format(last_datetime_date, last_datetime_hour))
 
                     # iterate over those entries and verify that they are not too far away from avg temperature and avg humidity
+                    print("Humidity and temperature outliers (avg_temp={}, avg_hum={}):".format(avg_temperature, avg_humidity))
                     for entry in entries:
-                        if abs(entry.temperature - avg_temperature) > 5:
-                            print("  The following entry seems to have a temperature outlier")
+                        # detect temperature diffs greater than 10 °C within one hour
+                        if abs(entry.temperature - avg_temperature) > 10:
                             print("  ", entry)
-                        if abs(entry.humidity - avg_humidity) > 15:
-                            print("  The following entry seems to have a humidity outlier")
+                        # detect temperature diffs greater than 30 °C within one hour
+                        if abs(entry.humidity - avg_humidity) > 30:
                             print("  ", entry)
 
                     entries = []
