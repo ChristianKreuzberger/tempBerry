@@ -19,7 +19,6 @@ class Command(BaseCommand):
             temperature_entries = TemperatureDataEntry.objects.filter(**sensor).order_by('created_at')
 
             last_temperature = None
-            last_humidity = None
             last_date = None
 
 
@@ -31,21 +30,16 @@ class Command(BaseCommand):
                 else:
                     time_diff_in_minutes = None
 
-                if last_date and time_diff_in_minutes < 15:
+                if last_date and time_diff_in_minutes < 5:
                     # last value was within 15 minutes
                     # check how much temperature and or humidity have changed
                     if entry.temperature and last_temperature and abs(entry.temperature - last_temperature) > 5:
                         print("Temperature changed too much with the following entry", entry)
                         print("Last temperature was: {} (taken {} minutes ago)".format(last_temperature, time_diff_in_minutes))
                         use_current_value = False
-                    if entry.humidity and last_humidity and abs(entry.humidity - last_humidity) > 10:
-                        print("Humidity changed too much with the following entry", entry)
-                        print("Last humidity was: {} (taken {} minutes ago)".format(last_humidity, time_diff_in_minutes))
-                        use_current_value = False
 
                 if use_current_value:
                     last_temperature = entry.temperature
-                    last_humidity = entry.humidity
                     last_date = entry.created_at
                 else:
                     print("Should probably delete it...")
