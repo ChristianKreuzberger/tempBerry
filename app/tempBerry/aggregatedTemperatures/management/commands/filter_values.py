@@ -37,21 +37,19 @@ class Command(BaseCommand):
 
                     # ToDo: Calculate 95% confidence interval for temp and humidity
 
-                    if len(temperatures) < 5:
-                        # ignore "small" datasets
-                        continue
+                    # only check outliers if there are enough entries
+                    if len(temperatures) > 5:
+                        print("Checking outliers for {} {}".format(last_datetime_date, last_datetime_hour))
 
-                    print("Checking outliers for {} {}".format(last_datetime_date, last_datetime_hour))
-
-                    # iterate over those entries and verify that they are not too far away from avg temperature and avg humidity
-                    print("Humidity and temperature outliers (avg_temp={}, avg_hum={}):".format(avg_temperature, avg_humidity))
-                    for special_entry in entries_to_check:
-                        # detect temperature diffs greater than 10 °C within one hour
-                        if abs(special_entry.temperature - avg_temperature) > 10:
-                            print("  ", special_entry)
-                        # detect temperature diffs greater than 30 °C within one hour
-                        if abs(special_entry.humidity - avg_humidity) > 30:
-                            print("  ", special_entry)
+                        # iterate over those entries and verify that they are not too far away from avg temperature and avg humidity
+                        print("Humidity and temperature outliers (avg_temp={}, avg_hum={}):".format(avg_temperature, avg_humidity))
+                        for special_entry in entries_to_check:
+                            # detect temperature diffs greater than 10 °C within one hour
+                            if abs(special_entry.temperature - avg_temperature) > 10:
+                                print("  ", special_entry)
+                            # detect temperature diffs greater than 30 °C within one hour
+                            if abs(special_entry.humidity - avg_humidity) > 30:
+                                print("  ", special_entry)
 
                     entries_to_check = []
                     temperatures = []
