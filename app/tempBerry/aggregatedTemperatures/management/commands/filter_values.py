@@ -26,17 +26,21 @@ class Command(BaseCommand):
             # iterate over temperature entries
             for entry in temperature_entries:
                 use_current_value = True
+                if last_date:
+                    time_diff_in_minutes = (entry.created_at - last_date).seconds/60
+                else:
+                    time_diff_in_minutes = None
 
-                if last_date and (entry.created_at - last_date).seconds/60 < 5:
-                    # last value was within 5 minutes
+                if last_date and time_diff_in_minutes < 15:
+                    # last value was within 15 minutes
                     # check how much temperature and or humidity have changed
                     if entry.temperature and last_temperature and abs(entry.temperature - last_temperature) > 5:
                         print("Temperature changed too much with the following entry", entry)
-                        print("Last temperature was: ", last_temperature)
+                        print("Last temperature was: {} (taken {} minutes ago)".format(last_temperature, time_diff_in_minutes))
                         use_current_value = False
                     if entry.humidity and last_humidity and abs(entry.humidity - last_humidity) > 10:
                         print("Humidity changed too much with the following entry", entry)
-                        print("Last humidity was: ", last_humidity)
+                        print("Last humidity was: {} (taken {} minutes ago)".format(last_humidity, time_diff_in_minutes))
                         use_current_value = False
 
                 if use_current_value:
