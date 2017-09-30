@@ -3,23 +3,18 @@ import numpy as np
 from tempBerry.temperatures.models import TemperatureDataEntry
 
 
-def mean_confidence_interval(data, confidence=0.95):
+def mean_confidence_interval(data):
     if len(data) == 0:
         return {
             'mean': 0,
             'median': 0,
-            'min': 0,
-            'max': 0
         }
 
     mean, median = np.mean(data), np.median(data)
-    min, max = mean - confidence*(mean-np.min(data)), mean + confidence*(np.max(data)-mean)
 
     return {
         'mean': mean,
         'median': median,
-        'min': min,
-        'max': max
     }
 
 
@@ -54,8 +49,8 @@ class Command(BaseCommand):
                 if last_datetime_date and (last_datetime_date != datetime_date or last_datetime_hour != datetime_hour):
 
                     # Calculate 95% confidence interval for temp and humidity
-                    confidence_temperature = mean_confidence_interval(temperatures, 0.99)
-                    confidence_humidity = mean_confidence_interval(humidities, 0.99)
+                    confidence_temperature = mean_confidence_interval(temperatures)
+                    confidence_humidity = mean_confidence_interval(humidities)
 
                     print("confidence_temperature=", confidence_temperature)
                     print("confidence_humidity=", confidence_humidity)
@@ -66,10 +61,10 @@ class Command(BaseCommand):
                     for special_entry in entries_to_check:
                         # detect temperature diffs greater than 10 °C within one hour
                         if special_entry.temperature and special_entry.temperature != confidence_temperature['median'] and \
-                                (special_entry.temperature < confidence_temperature['min'] or special_entry.temperature > confidence_temperature['max']):
+                                        abs(special_entry.temperature - confidence_temperature['median']) > 10:
                             print("  T ", special_entry)
                         if special_entry.humidity and special_entry.humidity != confidence_humidity['median'] and \
-                                (special_entry.humidity < confidence_humidity['min'] or special_entry.humidity > confidence_humidity['max']):
+                                        abs(special_entry.humidity - confidence_humidity['median']) > 30:
                             print("  H ", special_entry)
 
 
