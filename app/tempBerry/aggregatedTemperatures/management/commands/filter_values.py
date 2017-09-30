@@ -49,6 +49,7 @@ class Command(BaseCommand):
                     last_date = entry.created_at
                 else:
                     print("Should probably delete it...")
+                    entry.delete()
 
                 if len(last_n_temperatures) > 5:
                     last_n_temperatures.pop(0)
