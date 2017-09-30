@@ -26,12 +26,12 @@ class Command(BaseCommand):
 
             # iterate over temperature entries
             for entry in temperature_entries:
-                # extract date and hour
+                # extract date and hour of the current entry
                 datetime_date = entry.created_at.strftime('%Y-%m-%d')
                 datetime_hour = entry.created_at.strftime('%H')
 
-                if last_datetime_date and (last_datetime_date != datetime_date or last_datetime_hour != last_datetime_hour):
-                    # get day + hour of the current entry
+                if last_datetime_date and (last_datetime_date != datetime_date or last_datetime_hour != datetime_hour):
+                    # date and/or hour have changed!
                     avg_temperature = sum(temperatures)/len(temperatures)
                     avg_humidity = sum(humidities)/len(humidities)
 
