@@ -3,21 +3,6 @@ import numpy as np
 from tempBerry.temperatures.models import TemperatureDataEntry
 
 
-def mean_confidence_interval(data):
-    if len(data) == 0:
-        return {
-            'mean': 0,
-            'median': 0,
-        }
-
-    mean, median = np.mean(data), np.median(data)
-
-    return {
-        'mean': mean,
-        'median': median,
-    }
-
-
 class Command(BaseCommand):
     help = 'Filters out outliers for each sensor'
 
@@ -33,53 +18,32 @@ class Command(BaseCommand):
             print("Processing sensor", sensor)
             temperature_entries = TemperatureDataEntry.objects.filter(**sensor).order_by('created_at')
 
-            last_datetime_date = None
-            last_datetime_hour = None
+            last_temperature = None
+            last_humidity = None
+            last_date = None
 
-            temperatures = []
-            humidities = []
-            entries_to_check = []
 
             # iterate over temperature entries
             for entry in temperature_entries:
-                # extract date and hour of the current entry
-                datetime_date = entry.created_at.strftime('%Y-%m-%d')
-                datetime_hour = entry.created_at.strftime('%H')
+                use_current_value = True
 
-                if last_datetime_date and (last_datetime_date != datetime_date or last_datetime_hour != datetime_hour):
+                if last_date and (entry.created_at - last_date).seconds/60 < 5:
+                    # last value was within 5 minutes
+                    # check how much temperature and or humidity have changed
+                    if entry.temperature and last_temperature and abs(entry.temperature - last_temperature) > 5:
+                        print("Temperature changed too much with the following entry", entry)
+                        print("Last temperature was: ", last_temperature)
+                        use_current_value = False
+                    if entry.humidity and last_humidity and abs(entry.humidity - last_humidity) > 10:
+                        print("Humidity changed too much with the following entry", entry)
+                        print("Last humidity was: ", last_humidity)
+                        use_current_value = False
 
-                    # Calculate 95% confidence interval for temp and humidity
-                    confidence_temperature = mean_confidence_interval(temperatures)
-                    confidence_humidity = mean_confidence_interval(humidities)
-
-                    print("confidence_temperature=", confidence_temperature)
-                    print("confidence_humidity=", confidence_humidity)
-
-                    print("Checking outliers for {} {}".format(last_datetime_date, last_datetime_hour))
-
-                    # iterate over those entries and verify that they are not too far away from avg temperature and avg humidity
-                    for special_entry in entries_to_check:
-                        # detect temperature diffs greater than 10 °C within one hour
-                        if special_entry.temperature and special_entry.temperature != confidence_temperature['median'] and \
-                                        abs(special_entry.temperature - confidence_temperature['median']) > 10:
-                            print("  T ", special_entry)
-                        if special_entry.humidity and special_entry.humidity != confidence_humidity['median'] and \
-                                        abs(special_entry.humidity - confidence_humidity['median']) > 30:
-                            print("  H ", special_entry)
-
-
-                    entries_to_check = []
-                    temperatures = []
-                    humidities = []
-
-                # add current temperature and humidity to the arrays
-                if entry.temperature:
-                    temperatures.append(entry.temperature)
-                if entry.humidity:
-                    humidities.append(entry.humidity)
-                entries_to_check.append(entry)
-
-                last_datetime_date = datetime_date
-                last_datetime_hour = datetime_hour
+                if use_current_value:
+                    last_temperature = entry.temperature
+                    last_humidity = entry.humidity
+                    last_date = entry.created_at
+                else:
+                    print("Should probably delete it...")
 
 
