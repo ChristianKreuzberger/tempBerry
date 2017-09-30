@@ -1,5 +1,20 @@
 from django.core.management.base import BaseCommand, CommandError
+import numpy as np
+import scipy as sp
+from scipy import stats
 from tempBerry.temperatures.models import TemperatureDataEntry
+
+
+def mean_confidence_interval(data, confidence=0.95):
+    mean, sigma, median = np.mean(data), np.std(data), np.median(data)
+    interval = stats.norm.interval(0.95, loc=mean, scale=sigma)
+
+    return {
+        'mean': mean,
+        'median': median,
+        'min': interval[0],
+        'max': interval[1]
+    }
 
 
 class Command(BaseCommand):
@@ -35,29 +50,36 @@ class Command(BaseCommand):
                     avg_temperature = sum(temperatures)/len(temperatures)
                     avg_humidity = sum(humidities)/len(humidities)
 
-                    # ToDo: Calculate 95% confidence interval for temp and humidity
+                    # Calculate 95% confidence interval for temp and humidity
+                    confidence_temperature = mean_confidence_interval(temperatures, 0.99)
+                    confidence_humidity = mean_confidence_interval(humidities, 0.99)
 
-                    # only check outliers if there are enough entries
-                    if len(temperatures) > 5:
-                        print("Checking outliers for {} {}".format(last_datetime_date, last_datetime_hour))
+                    print(confidence_temperature)
+                    print(confidence_humidity)
 
-                        # iterate over those entries and verify that they are not too far away from avg temperature and avg humidity
-                        print("Humidity and temperature outliers (avg_temp={}, avg_hum={}):".format(avg_temperature, avg_humidity))
-                        for special_entry in entries_to_check:
-                            # detect temperature diffs greater than 10 °C within one hour
-                            if abs(special_entry.temperature - avg_temperature) > 10:
-                                print("  ", special_entry)
-                            # detect temperature diffs greater than 30 °C within one hour
-                            if abs(special_entry.humidity - avg_humidity) > 30:
-                                print("  ", special_entry)
+                    print("Checking outliers for {} {}".format(last_datetime_date, last_datetime_hour))
+
+                    # iterate over those entries and verify that they are not too far away from avg temperature and avg humidity
+                    print("Humidity and temperature outliers (avg_temp={}, avg_hum={}):".format(avg_temperature, avg_humidity))
+                    for special_entry in entries_to_check:
+                        # detect temperature diffs greater than 10 °C within one hour
+                        if special_entry.temperature and \
+                                (special_entry.temperature < confidence_temperature['min'] or special_entry.temperature > confidence_temperature['max']):
+                            print("  T ", special_entry)
+                        if special_entry.humidity and \
+                                (special_entry.humidity < confidence_humidity['min'] or special_entry.humidity > confidence_humidity['max']):
+                            print("  H ", special_entry)
+
 
                     entries_to_check = []
                     temperatures = []
                     humidities = []
 
                 # add current temperature and humidity to the arrays
-                temperatures.append(entry.temperature)
-                humidities.append(entry.humidity)
+                if entry.temperature:
+                    temperatures.append(entry.temperature)
+                if entry.humidity:
+                    humidities.append(entry.humidity)
                 entries_to_check.append(entry)
 
                 last_datetime_date = datetime_date
