@@ -22,6 +22,7 @@ class Command(BaseCommand):
 
             temperatures = []
             humidities = []
+            entries = []
 
             # iterate over temperature entries
             for entry in temperature_entries:
@@ -36,14 +37,23 @@ class Command(BaseCommand):
 
                     print("num_entries=", len(temperatures), ", for dates=", last_datetime_date, last_datetime_hour, avg_temperature, avg_humidity)
 
-                    # add this to database
+                    # iterate over those entries and verify that they are not too far away from avg temperature and avg humidity
+                    for entry in entries:
+                        if abs(entry.temperature - avg_temperature) > 5:
+                            print("  The following entry seems to have a temperature outlier")
+                            print("  ", entry)
+                        if abs(entry.humidity - avg_humidity) > 15:
+                            print("  The following entry seems to have a humidity outlier")
+                            print("  ", entry)
 
+                    entries = []
                     temperatures = []
                     humidities = []
 
                 # add current temperature and humidity to the arrays
                 temperatures.append(entry.temperature)
                 humidities.append(entry.humidity)
+                entries.append(entry)
 
                 last_datetime_date = datetime_date
                 last_datetime_hour = datetime_hour
