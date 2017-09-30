@@ -24,7 +24,7 @@ class Command(BaseCommand):
             do_delete = False
             if sensor_stats['total'] < 5:
                 # check if public room exists
-                rooms = Room.objects.filter(sensor_id=sensor_stats['sensor_id'])
+                rooms = Room.objects.filter(sensor_id_mappings__sensor_id=sensor_stats['sensor_id'])
                 if not rooms.exists():
                     # no rooms exists, we can safely delete this
                     do_delete = True

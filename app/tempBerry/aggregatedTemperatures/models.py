@@ -1,27 +1,36 @@
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
 
 
 class HourlyAggregatedTemperature(models.Model):
-    sensor_id = models.IntegerField(
-        db_index=True
+    room = models.ForeignKey(
+        "temperatures.Room",
+        null=True
     )
 
     datetime_day = models.DateField(
-        "The day where this entry is calculated for",
+        verbose_name=_("The day where this entry is calculated for"),
         db_index=True
     )
 
     datetime_hour = models.IntegerField(
-        "The hour this entry is calculated for",
+        verbose_name=_("The hour this entry is calculated for"),
         db_index=True
     )
 
     average_temperature = models.FloatField(
-        "Average Temperature"
+        verbose_name=_("Average Temperature"),
+        null=True
     )
 
     average_humidity = models.FloatField(
-        "Average Humidity"
+        verbose_name=_("Average Humidity"),
+        null=True
+    )
+
+    average_air_pressure = models.FloatField(
+        verbose_name=_("Average Air Pressure"),
+        null=True
     )
 
 
