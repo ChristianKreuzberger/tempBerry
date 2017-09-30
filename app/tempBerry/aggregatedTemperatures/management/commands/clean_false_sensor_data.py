@@ -22,7 +22,7 @@ class Command(BaseCommand):
 
         for sensor_stats in sensor_ids:
             do_delete = False
-            if sensor_stats['total'] < 5:
+            if sensor_stats['total'] < entries:
                 # check if public room exists
                 rooms = Room.objects.filter(sensor_id_mappings__sensor_id=sensor_stats['sensor_id'])
                 if not rooms.exists():
@@ -56,7 +56,18 @@ class Command(BaseCommand):
         print("Deleting ", entries.count(), " entries with a temperature of ", threshold, "°C or less")
         entries.delete()
 
+    def delete_very_high_temperatures(self, threshold=55):
+        """
+        Deletes all entries with temperatures higher than threshold °C (e.g., +55)
+        :param threshold:
+        :return:
+        """
+        entries = TemperatureDataEntry.objects.filter(temperature__gte=threshold)
+        print("Deleting ", entries.count(), " entries with a temperature of ", threshold, "°C or higher")
+        entries.delete()
+
     def handle(self, *args, **options):
-        self.delete_data_with_less_than(entries=5)
         self.delete_negative_humidities()
         self.delete_very_negative_temperatures()
+        self.delete_very_high_temperatures()
+        self.delete_data_with_less_than(entries=5)
