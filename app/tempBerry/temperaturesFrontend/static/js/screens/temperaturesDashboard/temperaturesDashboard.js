@@ -12,7 +12,9 @@
         }
     });
 
-    module.controller('TemperaturesDashboardController', function($scope, $timeout, temperaturesRestService, roomsRestService) {
+    module.controller('TemperaturesDashboardController', function(
+        $scope, $timeout, temperaturesRestService, roomsRestService
+    ) {
 
         var
             vm = this,

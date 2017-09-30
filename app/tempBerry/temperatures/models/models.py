@@ -18,6 +18,7 @@ class Room(models.Model):
 
     created_at = models.DateTimeField(
         auto_created=True,
+        auto_now_add=True,
         auto_now=False,
         verbose_name=_("When was this room created")
     )
@@ -82,6 +83,9 @@ class RoomSensorIdMapping(models.Model):
         verbose_name=_("Date time until when this mappingi s valid")
     )
 
+    def __str__(self):
+        return "Room {} is mapped to sensor with id {}".format(self.room, sensor_id)
+
 
 class DataEntry(models.Model):
     """ An abstract data entry """
@@ -91,6 +95,7 @@ class DataEntry(models.Model):
         abstract = True
 
     created_at = models.DateTimeField(
+        auto_created=True,
         auto_now_add=True,
         db_index=True,
         verbose_name=_("When was this entry created at")
@@ -146,11 +151,12 @@ class TemperatureDataEntry(DataEntry):
     )
 
     def __str__(self):
-        return "{sensor_id}: {temperature} °C, {humidity} %, {air_pressure} PA".format(
+        return "{sensor_id}: {temperature} °C, {humidity} %, {air_pressure} PA // captured at {created_at}".format(
             sensor_id=self.sensor_id,
             temperature=self.temperature,
             humidity=self.humidity,
-            air_pressure=self.air_pressure
+            air_pressure=self.air_pressure,
+            created_at=self.created_at
         )
 
 

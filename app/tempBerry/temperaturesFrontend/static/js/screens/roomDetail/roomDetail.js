@@ -100,34 +100,6 @@
             $timeout.cancel(timer);
         });
 
-        /**
-         * Get Latest Data and axtract data of the current sensor id
-         */
-        vm.getdata = function() {
-            roomsRestService.getLatest().$promise.then(function (response) {
-                // iterate over all response data
-                for (var i = 0; i < response.length; i++) {
-                    var entry = response[i];
-                    if (entry.sensor_id == vm.sensorId) {
-                        vm.entry = entry;
-                        return;
-                    }
-                }
-            });
-
-            timer = $timeout(vm.getdata, 30000);
-        };
-
-        vm.getdata();
-
-        var getRoomData = function () {
-            return roomsRestService.get({'id': vm.roomid}).$promise.then(
-                function (room) {
-                    vm.room = room;
-                }
-            );
-        };
-
         var getStatistics = function () {
             roomsRestService.getAggregates24h({id: vm.roomId}).$promise.then(
                 function success(response) {
