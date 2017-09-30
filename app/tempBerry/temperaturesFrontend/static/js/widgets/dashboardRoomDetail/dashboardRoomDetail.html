@@ -1,8 +1,10 @@
 <div class="panel panel-default" ui-sref="room-view({roomId: room.id})" role="button">
     <div class="panel-heading">
-        <h3 class="panel-title">{{ room.name }}</h3>
+        <h3 class="panel-title">
+            <a ui-sref="room-view({roomId: room.id})">{{ room.name }}</a>
+        </h3>
     </div>
-    <div class="panel-body">
+    <div class="panel-body" style="height: 70px">
         <div class="row" ng-if="room.live_data">
             <div class="col-xs-12">
                 <span ng-show="room.live_data.temperature != null && room.has_temperature">
@@ -17,12 +19,14 @@
                 <i ng-show="room.live_data.battery == '1.0'" class="fa fa-battery-quarter" aria-hidden="true" title="Battery might be empty"></i>
 
             </div>
-            <div class="col-xs-12 text-right" style="font-size: 8pt">
+            <div class="col-xs-12 text-right" style="font-size: 8pt; color: #696969">
                 Last updated: {{  room.live_data.created_at | date:'HH:mm dd-MM-yyyy' }}
             </div>
         </div>
         <div class="row" ng-if="!room.live_data">
-            Currently no live data available
+            <div class="col-xs-12">
+                Currently no live data available
+            </div>
         </div>
     </div>
 </div>
