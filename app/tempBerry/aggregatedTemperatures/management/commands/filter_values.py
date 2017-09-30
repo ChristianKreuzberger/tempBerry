@@ -1,19 +1,25 @@
 from django.core.management.base import BaseCommand, CommandError
 import numpy as np
-import scipy as sp
-from scipy import stats
 from tempBerry.temperatures.models import TemperatureDataEntry
 
 
 def mean_confidence_interval(data, confidence=0.95):
-    mean, sigma, median = np.mean(data), np.std(data), np.median(data)
-    interval = stats.norm.interval(0.95, loc=mean, scale=sigma)
+    if len(data) == 0:
+        return {
+            'mean': 0,
+            'median': 0,
+            'min': 0,
+            'max': 0
+        }
+
+    mean, median = np.mean(data), np.median(data)
+    min, max = confidence*(mean-np.min(data)), confidence*(np.max(data)-mean)
 
     return {
         'mean': mean,
         'median': median,
-        'min': interval[0],
-        'max': interval[1]
+        'min': min,
+        'max': max
     }
 
 
@@ -59,10 +65,10 @@ class Command(BaseCommand):
                     # iterate over those entries and verify that they are not too far away from avg temperature and avg humidity
                     for special_entry in entries_to_check:
                         # detect temperature diffs greater than 10 °C within one hour
-                        if special_entry.temperature and \
+                        if special_entry.temperature and special_entry.temperature != confidence_temperature['median'] and \
                                 (special_entry.temperature < confidence_temperature['min'] or special_entry.temperature > confidence_temperature['max']):
                             print("  T ", special_entry)
-                        if special_entry.humidity and \
+                        if special_entry.humidity and special_entry.humidity != confidence_humidity['median'] and \
                                 (special_entry.humidity < confidence_humidity['min'] or special_entry.humidity > confidence_humidity['max']):
                             print("  H ", special_entry)
 
