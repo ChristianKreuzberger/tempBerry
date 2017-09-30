@@ -13,7 +13,7 @@ def mean_confidence_interval(data, confidence=0.95):
         }
 
     mean, median = np.mean(data), np.median(data)
-    min, max = confidence*(mean-np.min(data)), confidence*(np.max(data)-mean)
+    min, max = mean - confidence*(mean-np.min(data)), mean + confidence*(np.max(data)-mean)
 
     return {
         'mean': mean,
