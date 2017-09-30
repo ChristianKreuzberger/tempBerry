@@ -19,28 +19,13 @@ class TemperatureDataEntryViewSet(viewsets.ModelViewSet):
     """
     serializer_class = TemperatureDataEntrySerializer
     filter_backends = (DjangoFilterBackend,)
-    filter_fields = ('sensor_id', )
+    filter_fields = ('room_id', 'sensor_id', )
 
     def get_queryset(self):
         end_date = timezone.now()
         start_date = end_date - timedelta(hours=96)
         return TemperatureDataEntry.objects.filter(
             created_at__range=(start_date, end_date)
-        )
-
-    def get_aggregates_24h(self, sensor_id):
-        end_date = timezone.now()
-        start_date = end_date - timedelta(hours=24)
-        qs = TemperatureDataEntry.objects.filter(
-            sensor_id=sensor_id,
-            created_at__range=(start_date, end_date)
-        ).aggregate(
-            max_temperature=Max('temperature'),
-            min_temperature=Min('temperature'),
-            avg_temperature=Avg('temperature'),
-            max_humidity=Max('humidity'),
-            min_humidity=Min('humidity'),
-            avg_humidity=Avg('humidity'),
         )
 
 
@@ -139,6 +124,9 @@ class RoomDataViewSet(viewsets.ModelViewSet):
             max_humidity=Max('humidity'),
             min_humidity=Min('humidity'),
             avg_humidity=Avg('humidity'),
+            max_air_pressure=Max('air_pressure'),
+            min_air_pressure=Min('air_pressure'),
+            avg_air_pressure=Avg('air_pressure'),
         )
 
         return Response(qs)
@@ -159,6 +147,9 @@ class RoomDataViewSet(viewsets.ModelViewSet):
             max_humidity=Max('humidity'),
             min_humidity=Min('humidity'),
             avg_humidity=Avg('humidity'),
+            max_air_pressure=Max('air_pressure'),
+            min_air_pressure=Min('air_pressure'),
+            avg_air_pressure=Avg('air_pressure'),
         )
 
         return Response(qs)

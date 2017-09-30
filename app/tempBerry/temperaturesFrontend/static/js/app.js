@@ -27,12 +27,12 @@ app.config(function($resourceProvider, $urlRouterProvider, $stateProvider) {
           component: 'temperaturesDashboard'
       }
   ).state(
-      'detail', {
-          url: '/details/{sensorId}',
-          component: 'temperaturesDetail',
+      'room-view', {
+          url: '/room/{roomId}',
+          component: 'roomDetail',
           resolve: {
-              'sensorId': function($stateParams) {
-                  return $stateParams.sensorId;
+              'roomId': function($stateParams) {
+                  return $stateParams.roomId;
               }
           }
       }

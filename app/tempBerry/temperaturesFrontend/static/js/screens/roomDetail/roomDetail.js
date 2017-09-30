@@ -4,16 +4,18 @@
     var
         module = angular.module('screens');
 
-    module.component('temperaturesDetail', {
-        templateUrl: 'js/screens/temperaturesDetail/temperaturesDetail.html',
-        controller: 'TemperaturesDetailController',
+    module.component('roomDetail', {
+        templateUrl: 'js/screens/roomDetail/roomDetail.html',
+        controller: 'RoomDetailController',
         controllerAs: 'vm',
         bindings: {
-            sensorId: '<'
+            roomId: '<'
         }
     });
 
-    module.controller('TemperaturesDetailController', function($scope, $timeout, temperaturesRestService, roomsRestService) {
+    module.controller('RoomDetailController', function(
+        $scope, $timeout, $q, temperaturesRestService, roomsRestService
+    ) {
 
         var
             vm = this,
@@ -74,7 +76,7 @@
             },
             title: {
                 enable: true,
-                text: 'Temperatures'
+                text: 'Last 3 days'
             },
             // subtitle: {
             //     enable: true,
@@ -118,30 +120,40 @@
 
         vm.getdata();
 
-
-
-        vm.getStatistics = function() {
-            roomsRestService.query({'sensor_id': vm.sensorId}).$promise.then(
-                function success(response) {
-                    if (response && response.length == 1) {
-                        var room = response[0];
-                        room.$getAggregates24h().then(
-                            function success(response) {
-                                console.log(response);
-                                vm.stats = response;
-                            }
-                        )
-                    }
+        var getRoomData = function () {
+            return roomsRestService.get({'id': vm.roomid}).$promise.then(
+                function (room) {
+                    vm.room = room;
                 }
-            )
+            );
         };
 
-        vm.getStatistics();
+        var getStatistics = function () {
+            roomsRestService.getAggregates24h({id: vm.roomId}).$promise.then(
+                function success(response) {
+                    vm.stats = response;
+                }
+            );
+        };
+
+        var getLatestData = function() {
+            roomsRestService.getLatest().$promise.then(function (response) {
+                for (var i = 0; i < response.length; i++) {
+                    if (response[i].id == vm.roomId) {
+                        vm.room = response[i];
+                    }
+                }
+            });
+
+            timer = $timeout(getLatestData, 10000);
+        };
+
+        getLatestData();
+        getStatistics();
 
 
 
-
-        temperaturesRestService.query({'sensor_id': vm.sensorId}).$promise.then(
+        temperaturesRestService.query({'room_id': vm.roomId}).$promise.then(
             function success(response) {
                 var temperatures = [];
                 var humidities = [];
@@ -191,7 +203,7 @@
                         strokeWidth: 2,
                         classed: 'dashed'
                     },
-                     {
+                    {
                         yAxis: 2,
                         values: humidities,      //values - represents the array of {x,y} data points
                         key: 'Humidity', //key  - the name of the series.

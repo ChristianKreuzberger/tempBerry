@@ -32,5 +32,6 @@ class RoomLiveDataSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Room
-        fields = ('id', 'name', 'comment', 'created_at', 'public', 'live_data')
+        fields = ('id', 'name', 'comment', 'created_at', 'public', 'live_data',
+                  'has_temperature', 'has_humidity', 'has_air_pressure')
         read_only_fields = ('created_at', 'live_data')

@@ -1,6 +1,6 @@
 <h3>Temperatures</h3>
 <div class="row">
-    <div class="col-xs-12 col-sm-6"  ng-repeat="entry in vm.entries | orderBy: 'name'">
-        <room-detail entry="entry"></room-detail>
+    <div class="col-xs-12 col-sm-6"  ng-repeat="room in vm.entries | orderBy: 'name'">
+        <dashboard-room-detail-widget room="room"></dashboard-room-detail-widget>
     </div>
 </div>

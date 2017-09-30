@@ -1,0 +1,28 @@
+<div class="panel panel-default" ui-sref="room-view({roomId: room.id})" role="button">
+    <div class="panel-heading">
+        <h3 class="panel-title">{{ room.name }}</h3>
+    </div>
+    <div class="panel-body">
+        <div class="row" ng-if="room.live_data">
+            <div class="col-xs-12">
+                <span ng-show="room.live_data.temperature != null">
+                    {{ room.live_data.temperature }} °C
+                </span>
+                <span ng-show="room.live_data.humidity != null">
+                    {{  room.live_data.humidity }} % rH
+                </span>
+                <span ng-show="room.live_data.air_pressure != null">
+                    {{ room.live_data.air_pressure }} PA
+                </span>
+                <i ng-show="room.live_data.battery == '1.0'" class="fa fa-battery-quarter" aria-hidden="true" title="Battery might be empty"></i>
+
+            </div>
+            <div class="col-xs-12 text-right" style="font-size: 8pt">
+                Last updated: {{  room.live_data.created_at | date:'HH:mm dd-MM-yyyy' }}
+            </div>
+        </div>
+        <div class="row" ng-if="!room.live_data">
+            Currently no live data available
+        </div>
+    </div>
+</div>

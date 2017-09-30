@@ -30,14 +30,14 @@
 
         vm.entries = [];
 
-        vm.getdata = function() {
+        var getLatestData = function() {
             roomsRestService.getLatest().$promise.then(function (response) {
                 vm.entries = response;
             });
 
-            timer = $timeout(vm.getdata, 10000);
+            timer = $timeout(getLatestData, 10000);
         };
 
-        vm.getdata();
+        getLatestData();
     });
 })();

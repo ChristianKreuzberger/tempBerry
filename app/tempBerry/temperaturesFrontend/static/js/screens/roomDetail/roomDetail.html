@@ -1,0 +1,51 @@
+<h3>Details for {{ vm.room.name }}</h3>
+
+<a ui-sref="main">Back</a>
+
+<div class="row">
+    <div class="col-xs-12 col-sm-6">
+        <dashboard-room-detail-widget room="vm.room"></dashboard-room-detail-widget>
+    </div>
+    <div class="col-xs-12 col-sm-6">
+        Created at: {{ vm.room.created_at | date:'HH:mm dd-MM-yyyy' }}<br />
+        comment: {{ vm.room.comment }}<br />
+        Features:
+        <span ng-show="vm.room.has_temperature" class="fa fa-thermometer-half" title=Temperature"></span>
+        <span ng-show="vm.room.has_humidity" class="fa fa-tint" title="Humidity"></span>
+        <span ng-show="vm.room.has_air_pressure" class="fa fa-cloud" title="Air pressure"></span>
+    </div>
+</div>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Stats over 24h</th>
+        <th>Min</th>
+        <th>Avg</th>
+        <th>Max</th>
+    </tr>
+    </thead>
+    <tr ng-show="vm.room.has_temperature">
+        <td>Temperature</td>
+        <td>{{ vm.stats.min_temperature | number:1 }} °C</td>
+        <td>{{ vm.stats.avg_temperature | number:1 }} °C</td>
+        <td>{{ vm.stats.max_temperature | number:1 }} °C</td>
+    </tr>
+    <tr ng-show="vm.room.has_humidity">
+        <td>Humidity</td>
+        <td>{{ vm.stats.min_humidity | number:1 }} %</td>
+        <td>{{ vm.stats.avg_humidity | number:1 }} %</td>
+        <td>{{ vm.stats.max_humidity | number:1 }} %</td>
+    </tr>
+    <tr ng-show="vm.room.has_air_pressure">
+        <td>Air Pressure</td>
+        <td>{{ vm.stats.min_air_pressure | number:1 }} PA</td>
+        <td>{{ vm.stats.avg_air_pressure | number:1 }} PA</td>
+        <td>{{ vm.stats.max_air_pressure | number:1 }} PA</td>
+    </tr>
+</table>
+
+<div ng-show="!vm.data || vm.data.length == 0">
+    Please wait
+</div>
+<nvd3 ng-if="vm.data && vm.data.length > 0" options="vm.chartOptions" data="vm.data" class="with-3d-shadow with-transitions"></nvd3>
