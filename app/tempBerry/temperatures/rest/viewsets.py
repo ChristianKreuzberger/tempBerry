@@ -43,22 +43,6 @@ class TemperatureDataEntryViewSet(viewsets.ModelViewSet):
             avg_humidity=Avg('humidity'),
         )
 
-    @list_route(methods=['GET'])
-    def latest(self, request):
-        """
-        Display latest data by reading the django cache last_temperature_data
-        :param request:
-        :return:
-        """
-        cached_data = cache.get('last_temperature_data')
-
-        if not cached_data:
-            data = [{'sensor_id': 0, 'error': "Not ready"}]
-            return Response(data)
-
-        serializer = self.get_serializer(cached_data.values(), many=True)
-        return Response(serializer.data)
-
 
 class RoomDataViewSet(viewsets.ModelViewSet):
     """
@@ -66,7 +50,6 @@ class RoomDataViewSet(viewsets.ModelViewSet):
     """
     serializer_class = RoomSerializer
     filter_backends = (DjangoFilterBackend,)
-    filter_fields = ('sensor_id',)
     queryset = Room.objects.all()
 
     @list_route(methods=['GET'])
@@ -88,7 +71,6 @@ class RoomDataViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.data)
 
-
     @list_route(methods=['GET'])
     def latest(self, request):
         """
@@ -98,18 +80,21 @@ class RoomDataViewSet(viewsets.ModelViewSet):
         """
         cached_data = cache.get('last_temperature_data')
 
-        if not cached_data:
-            data = [{'id': 0, 'error': "Not ready"}]
-            return Response(data)
-
         # get queryset with public rooms only
         rooms = self.get_queryset().filter(public=True)
 
+        if not cached_data:
+            # no cached_data available yet, fill it
+            cached_data = {}
+            for room in rooms:
+                data_set = room.temperaturedataentry_set.latest('created_at')
+                if data_set:
+                    cached_data[room.id] = data_set
+            cache.set('last_temperature_data', cached_data)
+
         # for each room, check if there are data in cached_data
         for room in rooms:
-            sensor_id = room.sensor_id
-
-            room.live_data = cached_data.get(sensor_id, None)
+            room.live_data = cached_data.get(room.id, None)
 
         serializer = RoomLiveDataSerializer(rooms, many=True)
         return Response(serializer.data)

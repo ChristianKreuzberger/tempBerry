@@ -5,7 +5,7 @@ from django.utils.timezone import datetime
 from django.utils.timezone import timedelta
 from django.utils.timezone import utc
 
-from tempBerry.temperatures.models.models import TemperatureDataEntry, Room
+from tempBerry.temperatures.models.models import TemperatureDataEntry, Room, RoomSensorIdMapping
 
 
 @receiver(post_save, sender=TemperatureDataEntry)
@@ -17,11 +17,15 @@ def update_last_temperature_data_in_cache(instance, *args, **kwargs):
     :param kwargs:
     :return:
     """
+    # ignore instances that do not have a room_id set
+    if not instance.room_id:
+        return
+
     cached_data = cache.get('last_temperature_data')
     if not cached_data:
         cached_data = dict()
 
-    cached_data[instance.sensor_id] = instance
+    cached_data[instance.room_id] = instance
 
     now = datetime.utcnow().replace(tzinfo=utc)
 
@@ -39,10 +43,11 @@ def update_last_temperature_data_in_cache(instance, *args, **kwargs):
 
     cache.set('last_temperature_data', cached_data)
 
+
 @receiver(pre_save, sender=TemperatureDataEntry)
 def store_room_sensor_id_combination(instance, *args, **kwargs):
     """
-    Checks if a room already exists,e lse it creates a new room for a temperature data entry
+    Checks if the given sensor_id matches a room
     :param instance:
     :param args:
     :param kwargs:
@@ -52,14 +57,18 @@ def store_room_sensor_id_combination(instance, *args, **kwargs):
     # verify that there is a room for this sensor id
     sensor_id = instance.sensor_id
 
-    rooms = Room.objects.filter(sensor_id=sensor_id)
+    now = datetime.utcnow().replace(tzinfo=utc)
 
-    if rooms.exists():
-        room = rooms.first()
-    else:
-        room = Room.objects.create(
-            name="Unknown room",
-            sensor_id = sensor_id
-        )
+    from django.db.models import Q
 
-    instance.room = room
+    # try to get a room for the given sensor id, where start_date <= now() <= end_date
+    mapping = RoomSensorIdMapping.objects.filter(
+        sensor_id=sensor_id,
+    ).filter(
+        Q(start_date__lte=now, end_date__gte=now) | Q(start_date__lte=now, end_date__isnull=True)
+    )
+
+    if len(mapping) == 1:
+        mapping = mapping.first()
+        # perfect match
+        instance.room_id = mapping.room_id

@@ -1,61 +1,105 @@
 # -*- coding: utf-8 -*-
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
 
 
 class Room(models.Model):
     """ A room """
 
     class Meta:
+        verbose_name = _("Room")
+        verbose_name_plural = _("Rooms")
         ordering = ("created_at", )
 
     name = models.CharField(
         max_length=128,
-        verbose_name="Name of the room"
+        verbose_name=_("Name of the room")
     )
 
     created_at = models.DateTimeField(
         auto_created=True,
         auto_now=True,
-        verbose_name="When was this room created"
+        verbose_name=_("When was this room created")
     )
 
     comment = models.TextField(
-        verbose_name="Comment for this room"
-    )
-
-    sensor_id = models.IntegerField(
-        db_index=True,
-        verbose_name="Sensor ID related to this room"
+        verbose_name=_("Comment for this room")
     )
 
     public = models.BooleanField(
-        verbose_name="Whether this room is public or not",
+        verbose_name=_("Whether this room is public or not"),
         default=False
+    )
+
+    has_temperature = models.BooleanField(
+        default=False,
+        verbose_name=_("Whether this room has a working temperature sensor")
+    )
+
+    has_humidity = models.BooleanField(
+        default=False,
+        verbose_name=_("Whether this room has a working humidity sensor")
+    )
+
+    has_air_pressure = models.BooleanField(
+        default=False,
+        verbose_name=_("Whether this room has a working air pressure sensor")
     )
 
     def __str__(self):
         return self.name
 
 
+class RoomSensorIdMapping(models.Model):
+    """ Contains a mapping between rooms and sensor ids"""
+    class Meta:
+        verbose_name = _("Mapping between room and sensor id")
+        verbose_name_plural = _("Mappings between rooms and sensor ids")
+
+    room = models.ForeignKey(
+        "temperatures.Room",
+        related_name="sensor_id_mappings"
+    )
+
+    sensor_id = models.IntegerField(
+        db_index=True
+    )
+
+    start_date = models.DateTimeField(
+        auto_created=False, auto_now=False, auto_now_add=False,
+        verbose_name=_("Date time after when this mapping is valid")
+    )
+
+    end_date = models.DateTimeField(
+        auto_created=False, auto_now=False, auto_now_add=False,
+        blank=True, null=True,
+        verbose_name=_("Date time until when this mappingi s valid")
+    )
+
+
 class DataEntry(models.Model):
     """ An abstract data entry """
 
     class Meta:
-        ordering = ("creatd_at", )
+        ordering = ("created_at", )
+        abstract = True
 
     created_at = models.DateTimeField(
         auto_now_add=True,
         db_index=True,
-        verbose_name="When was this entry created at"
+        verbose_name=_("When was this entry created at")
     )
 
     source = models.CharField(
         max_length=128,
-        verbose_name="Where is this entry from"
+        verbose_name=_("Where is this entry from")
     )
 
-    class Meta:
-        abstract = True
+    room = models.ForeignKey(
+        "temperatures.Room",
+        null=True,
+        verbose_name=_("Which room is this entry associated to")
+    )
 
 
 class TemperatureDataEntry(DataEntry):
@@ -75,17 +119,32 @@ class TemperatureDataEntry(DataEntry):
         verbose_name="The room associated to the temperature data entry"
     )
 
-    temperature = models.FloatField()
+    temperature = models.FloatField(
+        null=True,
+        verbose_name=_("Temeprature in Celsius")
+    )
 
-    humidity = models.FloatField()
+    humidity = models.FloatField(
+        null=True,
+        verbose_name=_("Relative humidify")
+    )
 
-    battery = models.SmallIntegerField()
+    air_pressure = models.FloatField(
+        null=True,
+        verbose_name=_("Air pressure in PA")
+    )
+
+    battery = models.SmallIntegerField(
+        null=True,
+        verbose_name=_("Battery status of the sensor")
+    )
 
     def __str__(self):
-        return "{sensor_id}: {temperature} °C, {humidity} %".format(
+        return "{sensor_id}: {temperature} °C, {humidity} %, {air_pressure} PA".format(
             sensor_id=self.sensor_id,
             temperature=self.temperature,
-            humidity=self.humidity
+            humidity=self.humidity,
+            air_pressure=self.air_pressure
         )
 
 
