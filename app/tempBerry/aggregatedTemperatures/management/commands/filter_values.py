@@ -21,6 +21,8 @@ class Command(BaseCommand):
             last_temperature = None
             last_date = None
 
+            last_n_temperatures = []
+
 
             # iterate over temperature entries
             for entry in temperature_entries:
@@ -34,14 +36,21 @@ class Command(BaseCommand):
                     # last value was within 15 minutes
                     # check how much temperature and or humidity have changed
                     if entry.temperature and last_temperature and abs(entry.temperature - last_temperature) > 5:
-                        print("Temperature changed too much with the following entry", entry)
-                        print("Last temperature was: {} (taken {} minutes ago)".format(last_temperature, time_diff_in_minutes))
-                        use_current_value = False
+                        # calculate average of the last n values
+                        avg_temp = np.mean(last_n_temperatures)
+                        if abs(entry.temperature - avg_temp) > 5:
+                            print("Temperature changed too much with the following entry", entry)
+                            print("Last temperature was: {} (taken {} minutes ago)".format(last_temperature, time_diff_in_minutes))
+                            use_current_value = False
 
                 if use_current_value:
                     last_temperature = entry.temperature
+                    last_n_temperatures.append(last_temperature)
                     last_date = entry.created_at
                 else:
                     print("Should probably delete it...")
+
+                if len(last_n_temperatures) > 5:
+                    last_n_temperatures.pop(0)
 
 
