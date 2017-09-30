@@ -46,21 +46,17 @@ class Command(BaseCommand):
                 datetime_hour = entry.created_at.strftime('%H')
 
                 if last_datetime_date and (last_datetime_date != datetime_date or last_datetime_hour != datetime_hour):
-                    # date and/or hour have changed!
-                    avg_temperature = sum(temperatures)/len(temperatures)
-                    avg_humidity = sum(humidities)/len(humidities)
 
                     # Calculate 95% confidence interval for temp and humidity
                     confidence_temperature = mean_confidence_interval(temperatures, 0.99)
                     confidence_humidity = mean_confidence_interval(humidities, 0.99)
 
-                    print(confidence_temperature)
-                    print(confidence_humidity)
+                    print("confidence_temperature=", confidence_temperature)
+                    print("confidence_humidity=", confidence_humidity)
 
                     print("Checking outliers for {} {}".format(last_datetime_date, last_datetime_hour))
 
                     # iterate over those entries and verify that they are not too far away from avg temperature and avg humidity
-                    print("Humidity and temperature outliers (avg_temp={}, avg_hum={}):".format(avg_temperature, avg_humidity))
                     for special_entry in entries_to_check:
                         # detect temperature diffs greater than 10 °C within one hour
                         if special_entry.temperature and \
