@@ -5,13 +5,13 @@
     <div class="panel-body">
         <div class="row" ng-if="room.live_data">
             <div class="col-xs-12">
-                <span ng-show="room.live_data.temperature != null">
+                <span ng-show="room.live_data.temperature != null && room.has_temperature">
                     {{ room.live_data.temperature }} °C
                 </span>
-                <span ng-show="room.live_data.humidity != null">
+                <span ng-show="room.live_data.humidity != null && room.has_humidity">
                     {{  room.live_data.humidity }} % rH
                 </span>
-                <span ng-show="room.live_data.air_pressure != null">
+                <span ng-show="room.live_data.air_pressure != null && room.has_air_pressure">
                     {{ room.live_data.air_pressure }} PA
                 </span>
                 <i ng-show="room.live_data.battery == '1.0'" class="fa fa-battery-quarter" aria-hidden="true" title="Battery might be empty"></i>

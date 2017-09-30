@@ -18,8 +18,14 @@ class Room(models.Model):
 
     created_at = models.DateTimeField(
         auto_created=True,
-        auto_now=True,
+        auto_now=False,
         verbose_name=_("When was this room created")
+    )
+
+    last_updated_at = models.DateTimeField(
+        auto_created=True,
+        auto_now=True,
+        verbose_name=_("When was this room last updated")
     )
 
     comment = models.TextField(
