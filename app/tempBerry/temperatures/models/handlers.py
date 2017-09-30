@@ -1,6 +1,7 @@
 from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 from django.core.cache import cache
+from django.core.validators import ValidationError
 from django.utils.timezone import datetime
 from django.utils.timezone import timedelta
 from django.utils.timezone import utc
@@ -80,3 +81,25 @@ def store_room_sensor_id_combination(instance, *args, **kwargs):
         mapping = mapping.first()
         # perfect match
         instance.room_id = mapping.room_id
+
+        # check if data exists in cache
+        cached_data = cache.get('last_temperature_data')
+        if cached_data and instance.room_id in cached_data:
+            last_room_data = cached_data[instance.room_id]
+            # check if difference in temperature is plausible
+            if abs(last_room_data.temperature - instance.temperature) > 5:
+                raise ValidationError(
+                    {'temperature': ValidationError(
+                        "Temperature changed rapidly, rejecting",
+                        params={'temperature': instance.temperature},
+                        code='invalid'
+                    )}
+                )
+            elif abs(last_room_data.humidity - instance.humidity) > 30:
+                raise ValidationError(
+                    {'humidity': ValidationError(
+                        "Humidity changed rapidly, rejecting",
+                        params={'humidity': instance.humidity},
+                        code='invalid'
+                    )}
+                )

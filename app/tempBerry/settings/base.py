@@ -145,4 +145,5 @@ STATIC_ROOT = os.path.join(BASE_DIR, '..', '..', 'htdocs')
 
 REST_FRAMEWORK = {
     #'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
+    'EXCEPTION_HANDLER': 'tempBerry.temperatures.rest.custom_exception_handler.custom_exception_handler',
 }
