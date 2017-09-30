@@ -9,7 +9,7 @@ from tempBerry.temperatures.models.models import TemperatureDataEntry, Room, Roo
 
 
 @receiver(post_save, sender=TemperatureDataEntry)
-def update_last_temperature_data_in_cache(instance, *args, **kwargs):
+def update_last_temperature_data_in_cache(instance, created, *args, **kwargs):
     """
     Stores the latest temperature data in django cache
     :param instance:
@@ -19,6 +19,10 @@ def update_last_temperature_data_in_cache(instance, *args, **kwargs):
     """
     # ignore instances that do not have a room_id set
     if not instance.room_id:
+        return
+
+    # ignore updates
+    if not created:
         return
 
     cached_data = cache.get('last_temperature_data')
@@ -53,6 +57,10 @@ def store_room_sensor_id_combination(instance, *args, **kwargs):
     :param kwargs:
     :return:
     """
+
+    # ignore this if room id is already set
+    if instance.room_id:
+        return
 
     # verify that there is a room for this sensor id
     sensor_id = instance.sensor_id
