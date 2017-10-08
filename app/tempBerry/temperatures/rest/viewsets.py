@@ -26,7 +26,7 @@ class TemperatureDataEntryViewSet(viewsets.ModelViewSet):
         start_date = end_date - timedelta(hours=96)
         return TemperatureDataEntry.objects.filter(
             created_at__range=(start_date, end_date)
-        )
+        ).order_by('created_at')
 
 
 class RoomDataViewSet(viewsets.ModelViewSet):
