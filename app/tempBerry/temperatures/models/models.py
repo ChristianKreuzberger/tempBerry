@@ -84,7 +84,7 @@ class RoomSensorIdMapping(models.Model):
     )
 
     def __str__(self):
-        return "Room {} is mapped to sensor with id {}".format(self.room, sensor_id)
+        return "Room {} is mapped to sensor with id {}".format(self.room, self.sensor_id)
 
 
 class DataEntry(models.Model):
