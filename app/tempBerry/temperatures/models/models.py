@@ -108,7 +108,9 @@ class DataEntry(models.Model):
 
     room = models.ForeignKey(
         "temperatures.Room",
+        blank=True,
         null=True,
+        on_delete=models.CASCADE,
         verbose_name=_("Which room is this entry associated to")
     )
 
@@ -120,14 +122,6 @@ class TemperatureDataEntry(DataEntry):
 
     sensor_id = models.IntegerField(
         db_index=True
-    )
-
-    room = models.ForeignKey(
-        "Room",
-        blank=True,
-        null=True,
-        on_delete=models.CASCADE,
-        verbose_name="The room associated to the temperature data entry"
     )
 
     temperature = models.FloatField(

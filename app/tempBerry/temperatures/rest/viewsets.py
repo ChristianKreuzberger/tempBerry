@@ -50,7 +50,7 @@ class RoomDataViewSet(viewsets.ModelViewSet):
         ).order_by('total').filter(total__gte=10).values_list('sensor_id', flat=True)
 
         # get all rooms that are not public
-        rooms = self.get_queryset().filter(public=False, sensor_id__in=sensor_ids)
+        rooms = self.get_queryset().filter(public=False, sensor_id_mappings__sensor_id__in=sensor_ids)
 
         serializer = self.get_serializer(rooms, many=True)
 
