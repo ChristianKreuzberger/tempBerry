@@ -108,7 +108,7 @@ def set_rooms_on_data_entries_with_sensor_id(instance, *args, **kwargs):
 @receiver(pre_save, sender=TemperatureDataEntry)
 def store_room_sensor_id_combination(instance, *args, **kwargs):
     """
-    Checks if the given sensor_id matches a room
+    When storing a temperature data entry, check if the given sensor_id matches a room
     :param instance:
     :param args:
     :param kwargs:

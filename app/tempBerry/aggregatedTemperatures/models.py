@@ -3,6 +3,12 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class HourlyAggregatedTemperature(models.Model):
+    class Meta:
+        ordering = ('-datetime_day', '-datetime_hour')
+        unique_together = (
+            ('room', 'datetime_day', 'datetime_hour')
+        )
+
     room = models.ForeignKey(
         "temperatures.Room",
         null=True
