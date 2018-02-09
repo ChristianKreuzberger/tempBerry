@@ -5,9 +5,6 @@ services:
     image: mysql:5.5
     container_name: db.tempberry.local
     command: mysqld --user=root --verbose
-    volumes:
-      - ./dbcreation.sql:/tmp/dbcreation.sql
-      - ./import.sh:/tmp/import.sh
     ports:
       - "127.0.10.1:3306:3306"
     volumes:
