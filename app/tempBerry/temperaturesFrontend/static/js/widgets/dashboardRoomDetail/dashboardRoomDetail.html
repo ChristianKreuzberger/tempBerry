@@ -7,11 +7,29 @@
     <div class="panel-body" style="height: 70px">
         <div class="row" ng-if="room.live_data">
             <div class="col-xs-12">
+                <!-- Temperature -->
                 <span ng-show="room.live_data.temperature != null && room.has_temperature">
                     {{ room.live_data.temperature }} °C
+
+                    <span ng-show="room.live_data.temperature < room.average_last_hour.temperature"
+                          title="Down by {{ (room.average_last_hour.temperature - room.live_data.temperature) | number: 1 }} °C within the last hour"
+                          class="fa fa-arrow-down"></span>
+                    <span ng-show="room.live_data.temperature > room.average_last_hour.temperature"
+                          title="Up by {{ (room.live_data.temperature - room.average_last_hour.temperature) | number: 1 }} °C within the last hour"
+                          class="fa fa-arrow-up"></span>
+                    &nbsp;
                 </span>
+
+                <!-- Humidity -->
                 <span ng-show="room.live_data.humidity != null && room.has_humidity">
                     {{  room.live_data.humidity }} % rH
+
+                    <span ng-show="room.live_data.humidity < room.average_last_hour.humidity"
+                          title="Down by {{ (room.average_last_hour.temperature - room.live_data.temperature) | number: 0 }} % within the last hour"
+                          class="fa fa-arrow-down"></span>
+                    <span ng-show="room.live_data.humidity > room.average_last_hour.humidity"
+                          title="Up by {{ (room.live_data.temperature - room.average_last_hour.temperature) | number: 0 }} % within the last hour"
+                          class="fa fa-arrow-up"></span>
                 </span>
                 <span ng-show="room.live_data.air_pressure != null && room.has_air_pressure">
                     {{ room.live_data.air_pressure }} PA
