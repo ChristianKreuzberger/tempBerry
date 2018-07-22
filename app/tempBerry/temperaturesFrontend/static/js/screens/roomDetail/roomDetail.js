@@ -109,105 +109,119 @@
         };
 
         var getLatestData = function() {
-            roomsRestService.getLatest().$promise.then(function (response) {
+            timer = $timeout(getLatestData, 10000);
+
+            return roomsRestService.getLatest().$promise.then(function (response) {
                 for (var i = 0; i < response.length; i++) {
                     if (response[i].id == vm.roomId) {
                         vm.room = response[i];
+
+                        return vm.room;
                     }
                 }
             });
 
-            timer = $timeout(getLatestData, 10000);
         };
 
-        getLatestData();
-        getStatistics();
+        var getChartData = function () {
+            return temperaturesRestService.query({'room_id': vm.roomId}).$promise.then(
+                function success(response) {
+                    var temperatures = [];
+                    var humidities = [];
 
+                    var min_y = 99;
+                    var max_y = -99;
 
+                    var last_temperatures = [];
+                    var last_humidities = [];
 
-        temperaturesRestService.query({'room_id': vm.roomId}).$promise.then(
-            function success(response) {
-                var temperatures = [];
-                var humidities = [];
+                    for (var i = 0; i < response.length; i++) {
+                        // check min/max values
+                        if (response[i].temperature > max_y) {
+                            max_y = response[i].temperature;
+                        }
+                        if (response[i].temperature < min_y) {
+                            min_y = response[i].temperature;
+                        }
+                        if (response[i].humidity > max_y) {
+                            max_y = response[i].humidity;
+                        }
+                        if (response[i].humidity < min_y) {
+                            min_y = response[i].humidity;
+                        }
 
-                var min_y = 99;
-                var max_y = -99;
+                        // collect those values for average calculation
+                        last_temperatures.push(response[i].temperature);
+                        last_humidities.push(response[i].humidity);
 
-                var last_temperatures = [];
-                var last_humidities = [];
+                        // only take every 5th value (so approx. every 5th minute)
+                        if (i % 5 == 4) {
+                            // push the average temperature of the last 5 entries to temperatures array
+                            temperatures.push(
+                                {
+                                    x: moment(response[i-2].created_at),
+                                    y: Math.round(10*Math.average(last_temperatures))/10
+                                }
+                            );
+                            // push the average humidity of the last 5 entries to humidity array
+                            humidities.push(
+                                {
+                                    x: moment(response[i-2].created_at),
+                                    y: Math.round(Math.average(last_humidities))
+                                }
+                            );
 
-                for (var i = 0; i < response.length; i++) {
-                    // check min/max values
-                    if (response[i].temperature > max_y) {
-                        max_y = response[i].temperature;
+                            // clean last_temperatures and last_humidities
+                            last_humidities.length = 0;
+                            last_temperatures.length = 0;
+                        }
                     }
-                    if (response[i].temperature < min_y) {
-                        min_y = response[i].temperature;
-                    }
-                    if (response[i].humidity > max_y) {
-                        max_y = response[i].humidity;
-                    }
-                    if (response[i].humidity < min_y) {
-                        min_y = response[i].humidity;
-                    }
+                    // determine min/max values
+                    vm.chartOptions.chart.yDomain = [Math.floor(min_y)-5, Math.ceil(max_y)+5];
 
-                    // collect those values for average calculation
-                    last_temperatures.push(response[i].temperature);
-                    last_humidities.push(response[i].humidity);
+                    vm.data = [];
 
-                    // only take every 15th value (so approx. every 15th minute)
-                    if (i % 15 == 14) {
-                        // push the average temperature of the last 15 entries to temperatures array
-                        temperatures.push(
+                    if (vm.room.has_temperature) {
+                        vm.data.push(
                             {
-                                x: moment(response[i].created_at),
-                                y: Math.average(last_temperatures)
+                                yAxis: 1,
+                                values: temperatures,      //values - represents the array of {x,y} data points
+                                key: 'Temperatures', //key  - the name of the series.
+                                color: '#ff7f0e',  //color - optional: choose your own line color.
+                                strokeWidth: 2,
+                                classed: 'dashed'
                             }
                         );
-                        // push the average humidity of the last 15 entries to humidity array
-                        humidities.push(
-                            {
-                                x: moment(response[i].created_at),
-                                y: Math.average(last_humidities)
-                            }
-                        );
-
-                        // clean last_temperatures and last_humidities
-                        last_humidities.length = 0;
-                        last_temperatures.length = 0;
                     }
+
+                    if (vm.room.has_humidity) {
+                        vm.data.push(
+                            {
+                                yAxis: 2,
+                                values: humidities,      //values - represents the array of {x,y} data points
+                                key: 'Humidity', //key  - the name of the series.
+                                color: '#135dab',  //color - optional: choose your own line color.
+                                strokeWidth: 2,
+                                classed: 'dashed'
+                            }
+                        )
+                    }
+
+                    // for (var i = 0; i < response.length; i++) {
+                    //     var xy = response[i];
+                    //     vm.data.push(xy.temperature);
+                    //     vm.labels.push(moment(xy.created_at));
+                    // }
+                },
+                function rejection(error) {
+
                 }
-                // determine min/max values
-                vm.chartOptions.chart.yDomain = [Math.floor(min_y)-5, Math.ceil(max_y)+5];
+            );
+        };
 
-                vm.data = [
-                    {
-                        yAxis: 1,
-                        values: temperatures,      //values - represents the array of {x,y} data points
-                        key: 'Temperatures', //key  - the name of the series.
-                        color: '#ff7f0e',  //color - optional: choose your own line color.
-                        strokeWidth: 2,
-                        classed: 'dashed'
-                    },
-                    {
-                        yAxis: 2,
-                        values: humidities,      //values - represents the array of {x,y} data points
-                        key: 'Humidity', //key  - the name of the series.
-                        color: '#135dab',  //color - optional: choose your own line color.
-                        strokeWidth: 2,
-                        classed: 'dashed'
-                    },
-                ];
-                // for (var i = 0; i < response.length; i++) {
-                //     var xy = response[i];
-                //     vm.data.push(xy.temperature);
-                //     vm.labels.push(moment(xy.created_at));
-                // }
-            },
-            function rejection(error) {
+        getLatestData().then(getStatistics).then(getChartData);
 
-            }
-        );
+
 
     });
 })();
