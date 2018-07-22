@@ -133,38 +133,52 @@
                 var min_y = 99;
                 var max_y = -99;
 
+                var last_temperatures = [];
+                var last_humidities = [];
+
                 for (var i = 0; i < response.length; i++) {
-                    if (i % 5) {
+                    // check min/max values
+                    if (response[i].temperature > max_y) {
+                        max_y = response[i].temperature;
+                    }
+                    if (response[i].temperature < min_y) {
+                        min_y = response[i].temperature;
+                    }
+                    if (response[i].humidity > max_y) {
+                        max_y = response[i].humidity;
+                    }
+                    if (response[i].humidity < min_y) {
+                        min_y = response[i].humidity;
+                    }
+
+                    // collect those values for average calculation
+                    last_temperatures.push(response[i].temperature);
+                    last_humidities.push(response[i].humidity);
+
+                    // only take every 15th value (so approx. every 15th minute)
+                    if (i % 15 == 14) {
+                        // push the average temperature of the last 15 entries to temperatures array
                         temperatures.push(
                             {
                                 x: moment(response[i].created_at),
-                                y: response[i].temperature
+                                y: Math.average(last_temperatures)
                             }
                         );
+                        // push the average humidity of the last 15 entries to humidity array
                         humidities.push(
                             {
                                 x: moment(response[i].created_at),
-                                y: response[i].humidity
+                                y: Math.average(last_humidities)
                             }
                         );
 
-                        // check min/max values
-                        if (response[i].temperature > max_y) {
-                            max_y = response[i].temperature;
-                        }
-                        if (response[i].temperature < min_y) {
-                            min_y = response[i].temperature;
-                        }
-                        if (response[i].humidity > max_y) {
-                            max_y = response[i].humidity;
-                        }
-                        if (response[i].humidity < min_y) {
-                            min_y = response[i].humidity;
-                        }
+                        // clean last_temperatures and last_humidities
+                        last_humidities.length = 0;
+                        last_temperatures.length = 0;
                     }
                 }
                 // determine min/max values
-                vm.chartOptions.chart.yDomain = [min_y-10, max_y+10];
+                vm.chartOptions.chart.yDomain = [Math.floor(min_y)-5, Math.ceil(max_y)+5];
 
                 vm.data = [
                     {

@@ -15,6 +15,16 @@ var app = angular.module('app', [
     'widgets'
 ]);
 
+
+Math.average = function(input) {
+  this.output = 0;
+  for (this.i = 0; this.i < input.length; this.i++) {
+    this.output+=Number(input[this.i]);
+  }
+  return this.output/input.length;
+};
+
+
 app.config(function($resourceProvider, $urlRouterProvider, $stateProvider) {
   $resourceProvider.defaults.stripTrailingSlashes = false;
 
