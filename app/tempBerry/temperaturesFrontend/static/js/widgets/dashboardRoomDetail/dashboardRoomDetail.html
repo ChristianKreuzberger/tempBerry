@@ -11,10 +11,10 @@
                 <span ng-show="room.live_data.temperature != null && room.has_temperature">
                     {{ room.live_data.temperature }} °C
 
-                    <span ng-show="room.live_data.temperature < room.average_last_hour.temperature"
+                    <span ng-show="room.average_last_hour.temperature - room.live_data.temperature > 0.1"
                           title="Down by {{ (room.average_last_hour.temperature - room.live_data.temperature) | number: 1 }} °C within the last hour"
                           class="fa fa-arrow-down"></span>
-                    <span ng-show="room.live_data.temperature > room.average_last_hour.temperature"
+                    <span ng-show="room.average_last_hour.temperature - room.live_data.temperature < -0.1"
                           title="Up by {{ (room.live_data.temperature - room.average_last_hour.temperature) | number: 1 }} °C within the last hour"
                           class="fa fa-arrow-up"></span>
                     &nbsp;
@@ -24,11 +24,11 @@
                 <span ng-show="room.live_data.humidity != null && room.has_humidity">
                     {{  room.live_data.humidity }} % rH
 
-                    <span ng-show="room.live_data.humidity < room.average_last_hour.humidity"
-                          title="Down by {{ (room.average_last_hour.temperature - room.live_data.temperature) | number: 0 }} % within the last hour"
+                    <span ng-show="room.average_last_hour.humidity - room.live_data.humidity > 1"
+                          title="Down by {{ (room.average_last_hour.humidity - room.live_data.humidity) | number: 0 }} % within the last hour"
                           class="fa fa-arrow-down"></span>
-                    <span ng-show="room.live_data.humidity > room.average_last_hour.humidity"
-                          title="Up by {{ (room.live_data.temperature - room.average_last_hour.temperature) | number: 0 }} % within the last hour"
+                    <span ng-show="(room.average_last_hour.humidity - room.live_data.humidity) < -1"
+                          title="Up by {{ (room.live_data.humidity - room.average_last_hour.humidity) | number: 0 }} % within the last hour"
                           class="fa fa-arrow-up"></span>
                 </span>
                 <span ng-show="room.live_data.air_pressure != null && room.has_air_pressure">
