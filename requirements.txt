@@ -7,3 +7,4 @@ PyMySQL==0.7.9
 django-redis-cache>=1.7,<1.8
 numpy==1.13.*
 django_redis
+django-cors-headers==2.4.*

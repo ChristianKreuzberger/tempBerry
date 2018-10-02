@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'crispy_forms',
     'django_filters',
+    'corsheaders',
 
     # tempberry
     'tempBerry.temperatures',
@@ -52,6 +53,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -147,3 +149,13 @@ REST_FRAMEWORK = {
     #'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
     'EXCEPTION_HANDLER': 'tempBerry.temperatures.rest.custom_exception_handler.custom_exception_handler',
 }
+
+CORS_ORIGIN_REGEX_WHITELIST = (
+    '^(http?://)?localhost$',  # localhost
+    '^(http?://)?127\.0\.0\.1$',  # 127.0.0.1
+    '^(http?://)?0\.0\.0\.0$',  # 0.0.0.0
+    '^(http?://)?tempberry.local:(\d+)$',  # tempberry.local:any port
+    '^(http?://)?localhost:(\d+)$',  # localhost:any port
+    '^(http?://)?127\.0\.0\.1:(\d+)$',  # 127.0.0.1:any port
+    '^(http?://)?0\.0\.0\.0:(\d+)$',  # 0.0.0.0:any port
+)
