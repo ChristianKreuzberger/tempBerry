@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'corsheaders',
 
     # tempberry
+    'tempBerry.smarthome',
     'tempBerry.temperatures',
     'tempBerry.aggregatedTemperatures',
     'tempBerry.temperaturesFrontend'
