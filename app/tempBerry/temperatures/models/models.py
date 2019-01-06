@@ -11,6 +11,14 @@ class Room(models.Model):
         verbose_name_plural = _("Rooms")
         ordering = ("created_at", )
 
+    smarthome = models.ForeignKey(
+        'smarthome.SmartHome',
+        verbose_name=_("Smart Home that this Room belongs to"),
+        related_name='rooms',
+        blank=True,
+        null=True
+    )
+
     name = models.CharField(
         max_length=128,
         verbose_name=_("Name of the room")
