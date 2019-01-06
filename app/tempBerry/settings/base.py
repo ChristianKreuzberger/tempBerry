@@ -48,6 +48,7 @@ INSTALLED_APPS = [
 
     # tempberry
     'tempBerry.smarthome',
+    'tempBerry.speedtest',
     'tempBerry.temperatures',
     'tempBerry.aggregatedTemperatures',
     'tempBerry.temperaturesFrontend'
