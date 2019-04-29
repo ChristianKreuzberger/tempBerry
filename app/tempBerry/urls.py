@@ -18,5 +18,6 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^api/', include('tempBerry.temperatures.urls', namespace='api'))
+    url(r'^api/', include('tempBerry.temperatures.urls', namespace='temperatures')),
+    url(r'^api/', include('tempBerry.binarySensor.urls', namespace='binarySensors'))
 ]

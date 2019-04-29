@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'tempBerry.smarthome',
     'tempBerry.speedtest',
     'tempBerry.temperatures',
+    'tempBerry.binarySensor',
     'tempBerry.aggregatedTemperatures',
 ]
 
