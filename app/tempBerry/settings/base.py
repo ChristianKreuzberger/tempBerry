@@ -51,7 +51,6 @@ INSTALLED_APPS = [
     'tempBerry.speedtest',
     'tempBerry.temperatures',
     'tempBerry.aggregatedTemperatures',
-    'tempBerry.temperaturesFrontend'
 ]
 
 MIDDLEWARE = [

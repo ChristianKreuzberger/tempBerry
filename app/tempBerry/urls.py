@@ -17,7 +17,6 @@ from django.conf.urls import url, include
 from django.contrib import admin
 
 urlpatterns = [
-    url(r'^', include('tempBerry.temperaturesFrontend.urls', namespace='frontend')),
     url(r'^admin/', admin.site.urls),
     url(r'^api/', include('tempBerry.temperatures.urls', namespace='api'))
 ]

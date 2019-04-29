@@ -1,7 +1,7 @@
 Django>=1.11,<1.12
 django-crispy-forms>=1.6.1
-django-filter>=1.0.1
-djangorestframework>=3.8,<4
+django-filter>=2.1,<2.2
+djangorestframework>=3.9,<3.10
 django-userforeignkey>=0.3,<0.4
 Markdown>=2.6.7
 PyMySQL==0.7.9
