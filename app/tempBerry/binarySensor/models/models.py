@@ -1,15 +1,14 @@
 from django.db import models
 
-from tempBerry.temperatures.models.models import DataEntry
-
+from tempBerry.smarthome.models import AbstractDataEntry
 
 __all__ = [
     'BinarySensorData'
 ]
 
 
-class BinarySensorData(DataEntry):
-    """ A temperature entry """
+class BinarySensorData(AbstractDataEntry):
+    """ A binary sensor data entry """
     class Meta:
         ordering = ('sensor_id', 'created_at')
 

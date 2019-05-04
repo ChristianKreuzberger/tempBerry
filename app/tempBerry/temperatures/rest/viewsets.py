@@ -8,9 +8,10 @@ from rest_framework import viewsets
 from rest_framework.decorators import list_route, detail_route
 from rest_framework.response import Response
 
-from tempBerry.temperatures.models import TemperatureDataEntry, Room
-from tempBerry.temperatures.rest.serializers import TemperatureDataEntrySerializer, RoomSerializer, \
-    RoomLiveDataSerializer
+from tempBerry.smarthome.models import Room
+from tempBerry.smarthome.rest.serializers import RoomSerializer
+from tempBerry.temperatures.models import TemperatureDataEntry
+from tempBerry.temperatures.rest.serializers import TemperatureDataEntrySerializer, RoomLiveDataSerializer
 
 
 class TemperatureDataEntryViewSet(viewsets.ModelViewSet):

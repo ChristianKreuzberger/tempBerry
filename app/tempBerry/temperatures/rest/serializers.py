@@ -2,7 +2,9 @@ from django.db.models import Avg
 from django.utils import timezone
 
 from rest_framework import serializers
-from tempBerry.temperatures.models import TemperatureDataEntry, Room
+
+from tempBerry.smarthome.models import Room
+from tempBerry.temperatures.models import TemperatureDataEntry
 
 
 class TemperatureDataEntrySerializer(serializers.ModelSerializer):
@@ -12,17 +14,6 @@ class TemperatureDataEntrySerializer(serializers.ModelSerializer):
     class Meta:
         model = TemperatureDataEntry
         fields = ('id', 'sensor_id', 'temperature', 'humidity', 'air_pressure', 'created_at', 'room', 'source', 'battery')
-        read_only_fields = ('created_at', )
-
-
-class RoomSerializer(serializers.ModelSerializer):
-    """
-    Serializer for rooms
-    """
-    class Meta:
-        model = Room
-        fields = ('id', 'name', 'comment', 'created_at', 'public',
-                  'has_temperature', 'has_humidity', 'has_air_pressure')
         read_only_fields = ('created_at', )
 
 

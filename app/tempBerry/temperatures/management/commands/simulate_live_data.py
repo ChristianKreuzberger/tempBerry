@@ -5,7 +5,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db.models import Q
 from django.utils import timezone
 
-from tempBerry.temperatures.models import TemperatureDataEntry, Room, RoomSensorIdMapping
+from tempBerry.temperatures.models import TemperatureDataEntry, RoomSensorIdMapping
 
 
 class Command(BaseCommand):

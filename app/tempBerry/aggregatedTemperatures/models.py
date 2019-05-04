@@ -10,7 +10,7 @@ class HourlyAggregatedTemperature(models.Model):
         )
 
     room = models.ForeignKey(
-        "temperatures.Room",
+        "smarthome.Room",
         null=True
     )
 

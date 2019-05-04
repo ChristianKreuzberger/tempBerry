@@ -20,3 +20,10 @@ DATABASES = {
 ALLOWED_HOSTS = [
     "*"
 ]
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://redis.tempberry.local:6379/",
+    }
+}

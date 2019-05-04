@@ -7,7 +7,7 @@ from django.utils.timezone import datetime
 from django.utils.timezone import utc
 from django.utils.translation import ugettext_lazy as _
 
-from tempBerry.temperatures.models.models import TemperatureDataEntry, Room, RoomSensorIdMapping
+from tempBerry.temperatures.models.models import TemperatureDataEntry, RoomSensorIdMapping
 
 
 @receiver(post_save, sender=TemperatureDataEntry)

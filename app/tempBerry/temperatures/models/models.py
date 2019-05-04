@@ -2,67 +2,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-
-class Room(models.Model):
-    """ A room """
-
-    class Meta:
-        verbose_name = _("Room")
-        verbose_name_plural = _("Rooms")
-        ordering = ("created_at", )
-
-    smarthome = models.ForeignKey(
-        'smarthome.SmartHome',
-        verbose_name=_("Smart Home that this Room belongs to"),
-        related_name='rooms',
-        blank=True,
-        null=True
-    )
-
-    name = models.CharField(
-        max_length=128,
-        verbose_name=_("Name of the room")
-    )
-
-    created_at = models.DateTimeField(
-        auto_created=True,
-        auto_now_add=True,
-        auto_now=False,
-        verbose_name=_("When was this room created")
-    )
-
-    last_updated_at = models.DateTimeField(
-        auto_created=True,
-        auto_now=True,
-        verbose_name=_("When was this room last updated")
-    )
-
-    comment = models.TextField(
-        verbose_name=_("Comment for this room")
-    )
-
-    public = models.BooleanField(
-        verbose_name=_("Whether this room is public or not"),
-        default=False
-    )
-
-    has_temperature = models.BooleanField(
-        default=False,
-        verbose_name=_("Whether this room has a working temperature sensor")
-    )
-
-    has_humidity = models.BooleanField(
-        default=False,
-        verbose_name=_("Whether this room has a working humidity sensor")
-    )
-
-    has_air_pressure = models.BooleanField(
-        default=False,
-        verbose_name=_("Whether this room has a working air pressure sensor")
-    )
-
-    def __str__(self):
-        return self.name
+from tempBerry.smarthome.models import AbstractDataEntry
 
 
 class RoomSensorIdMapping(models.Model):
@@ -72,7 +12,7 @@ class RoomSensorIdMapping(models.Model):
         verbose_name_plural = _("Mappings between rooms and sensor ids")
 
     room = models.ForeignKey(
-        "temperatures.Room",
+        "smarthome.Room",
         related_name="sensor_id_mappings"
     )
 
@@ -95,35 +35,7 @@ class RoomSensorIdMapping(models.Model):
         return "Room {} is mapped to sensor with id {}".format(self.room, self.sensor_id)
 
 
-class DataEntry(models.Model):
-    """ An abstract data entry """
-
-    class Meta:
-        ordering = ("created_at", )
-        abstract = True
-
-    created_at = models.DateTimeField(
-        auto_created=True,
-        auto_now_add=True,
-        db_index=True,
-        verbose_name=_("When was this entry created at")
-    )
-
-    source = models.CharField(
-        max_length=128,
-        verbose_name=_("Where is this entry from")
-    )
-
-    room = models.ForeignKey(
-        "temperatures.Room",
-        blank=True,
-        null=True,
-        on_delete=models.CASCADE,
-        verbose_name=_("Which room is this entry associated to")
-    )
-
-
-class TemperatureDataEntry(DataEntry):
+class TemperatureDataEntry(AbstractDataEntry):
     """ A temperature entry """
     class Meta:
         ordering = ('sensor_id', 'created_at')
@@ -162,7 +74,7 @@ class TemperatureDataEntry(DataEntry):
         )
 
 
-class UnknownDataEntry(DataEntry):
+class UnknownDataEntry(AbstractDataEntry):
     raw_data = models.TextField()
 
 
