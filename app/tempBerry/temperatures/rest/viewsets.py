@@ -73,7 +73,12 @@ class RoomDataViewSet(viewsets.ModelViewSet):
             # no cached_data available yet, fill it
             cached_data = {}
             for room in rooms:
-                data_set = room.temperaturedataentry_set.latest('created_at')
+                # check if the room actually has data
+
+                # data_set = room.temperaturedataentry_set.latest('created_at')
+                # above query fails if no data entry exists for a certain room
+                data_set = room.temperaturedataentry_set.filter().order_by('-created_at').first()
+
                 if data_set:
                     cached_data[room.id] = data_set
             cache.set('last_temperature_data', cached_data)
