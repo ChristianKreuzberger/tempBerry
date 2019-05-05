@@ -25,7 +25,7 @@ class TemperatureDataEntrySerializer(serializers.ModelSerializer):
             'source',
             'battery'
         )
-        read_only_fields = ('created_at', 'sensor_id', 'real_sensor', 'room')
+        read_only_fields = ('created_at', 'real_sensor', 'room')
 
 
 class RoomLiveDataSerializer(serializers.ModelSerializer):
