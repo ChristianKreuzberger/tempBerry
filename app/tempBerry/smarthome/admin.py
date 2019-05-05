@@ -22,8 +22,8 @@ class RoomAdmin(admin.ModelAdmin):
 @admin.register(Sensor)
 class SensorAdmin(admin.ModelAdmin):
     list_display = ('name', 'created_at', 'last_updated_at', 'public')
-    search_fields = ('name',)
-    list_filter = ('public', )
+    search_fields = ('name', 'type', )
+    list_filter = ('public', 'type',)
 
 
 @admin.register(SensorIdToSensorMapping)
