@@ -9,5 +9,13 @@ class BinarySensorDataSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = BinarySensorData
-        fields = ('id', 'sensor_id', 'binary_state', 'created_at', 'room', 'source',)
-        read_only_fields = ('created_at', )
+        fields = (
+            'id',
+            'sensor_id',
+            'binary_state',
+            'created_at',
+            'room',
+            'real_sensor',
+            'source',
+        )
+        read_only_fields = ('created_at', 'room', 'real_sensor',)

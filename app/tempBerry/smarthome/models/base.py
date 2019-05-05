@@ -25,6 +25,14 @@ class AbstractDataEntry(models.Model):
         verbose_name=_("Where is this entry from")
     )
 
+    real_sensor = models.ForeignKey(
+        "smarthome.Sensor",
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+        verbose_name=_("Which sensor is this entry associated to")
+    )
+
     room = models.ForeignKey(
         "smarthome.Room",
         blank=True,

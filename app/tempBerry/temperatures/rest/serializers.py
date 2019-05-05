@@ -13,8 +13,19 @@ class TemperatureDataEntrySerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = TemperatureDataEntry
-        fields = ('id', 'sensor_id', 'temperature', 'humidity', 'air_pressure', 'created_at', 'room', 'source', 'battery')
-        read_only_fields = ('created_at', )
+        fields = (
+            'id',
+            'sensor_id',
+            'temperature',
+            'humidity',
+            'air_pressure',
+            'created_at',
+            'room',
+            'real_sensor',
+            'source',
+            'battery'
+        )
+        read_only_fields = ('created_at', 'sensor_id', 'real_sensor', 'room')
 
 
 class RoomLiveDataSerializer(serializers.ModelSerializer):

@@ -91,8 +91,7 @@ def set_rooms_on_data_entries_with_sensor_id(instance, *args, **kwargs):
     """
 
     # get all entries for the given sensor id that do not have a room set
-    qs = TemperatureDataEntry.objects.filter(sensor_id=instance.sensor_id, room__isnull=True)\
-
+    qs = TemperatureDataEntry.objects.filter(sensor_id=instance.sensor_id, room__isnull=True)
 
     # filter by start-date
     qs = qs.filter(created_at__gte=instance.start_date)
@@ -132,12 +131,14 @@ def store_room_sensor_id_combination(instance, *args, **kwargs):
     )
 
     if len(mapping) == 1:
-        mapping = mapping.first()
         # perfect match
+        mapping = mapping.first()
         instance.room_id = mapping.room_id
 
         # check if data exists in cache
         cached_data = cache.get('last_temperature_data')
+
+        # update the cache if anything exists
         if cached_data and instance.room_id in cached_data:
             last_room_data = cached_data[instance.room_id]
             # check if difference in temperature is plausible
