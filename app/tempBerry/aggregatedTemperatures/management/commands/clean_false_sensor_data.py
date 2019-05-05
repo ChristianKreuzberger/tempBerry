@@ -1,6 +1,8 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.db.models import Count
-from tempBerry.temperatures.models import TemperatureDataEntry, Room
+
+from tempBerry.smarthome.models import Room
+from tempBerry.temperatures.models import TemperatureDataEntry
 
 
 class Command(BaseCommand):
