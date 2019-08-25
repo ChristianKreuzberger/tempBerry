@@ -127,6 +127,7 @@ def auto_set_assigned_sensor_based_on_mapping(instance, sender, raw, *args, **kw
 
         # set instances real sensor id based on the mapping
         instance.real_sensor_id = mapping.real_sensor_id
+        instance.room_id = mapping.real_sensor.room_id
 
         # no need to call .save() here, as we are still within the pre_save phase
 
