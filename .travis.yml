@@ -1,0 +1,35 @@
+sudo: false
+language: python
+dist: xenial # default is ubuntu 14.04, we need at least 16.04
+python:
+  - 3.6
+
+jobs:
+  include:
+    - stage: test
+      services:
+        - mysql
+      before_install:
+        - mysql -e 'CREATE DATABASE tempberry;'
+      install:
+        - pip install -r requirements.txt
+      script: 
+        - cd app
+        - export DJANGO_SETTINGS_MODULE=tempBerry.settings.travis
+        # run basic checks
+        - python manage.py check
+        # verify that no migrations are missing
+        - python manage.py makemigrations --dry-run 
+        # run tests
+        - python manage.py test
+
+    - stage: build
+      install:
+        - echo "No install needed"
+      services:
+        - docker
+      script:
+        - docker build -f docker/python/Dockerfile -t $DOCKER_USERNAME/tempberry-backend:master .
+      after_success:
+        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+        - docker push $DOCKER_USERNAME/tempberry-backend:master

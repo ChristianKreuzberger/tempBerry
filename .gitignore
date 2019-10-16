@@ -4,8 +4,6 @@ db.sqlite3
 __pycache__
 **.pyc
 **.pyo
-**/settings/live.py
-**/settings/dev.py
 htdocs/
 dumps/*.sql
 dumps/*.gz

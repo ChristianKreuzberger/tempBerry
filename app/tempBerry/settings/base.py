@@ -88,7 +88,7 @@ WSGI_APPLICATION = 'tempBerry.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/1.10/ref/settings/#databases
+# https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
 import pymysql
 pymysql.install_as_MySQLdb()

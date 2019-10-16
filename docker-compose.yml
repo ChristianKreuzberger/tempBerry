@@ -7,7 +7,7 @@ services:
     container_name: db.tempberry.local
     command: mysqld --verbose
     ports:
-      - "127.0.10.1:3306:3306"
+      - "3306:3306"
     volumes:
     - ./dumps:/docker-entrypoint-initdb.d
     - db_files:/var/lib/mysql/
