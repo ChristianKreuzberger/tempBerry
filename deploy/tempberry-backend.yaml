@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tempberry-backend
+  labels:
+    app: tempberry
+    tier: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      tier: backend
+  template:
+    metadata:
+      labels:
+        tier: backend
+    spec:
+      containers:
+      - name: tempberry-backend
+        image: ckreuzberger/tempberry-backend:master
+        # remove comment in next line to pull image from local cache
+        # imagePullPolicy: Never
+        ports:
+        - containerPort: 8000
+        env:
+        - name: DJANGO_SETTINGS_MODULE
+          value: "tempBerry.settings.live"
+        - name: SECRET_KEY
+          value: "TODO_ADD_KEY_HERE"
+
+---
+
+# [START service]
+apiVersion: v1
+kind: Service
+metadata:
+  name: tempberry-backend-service
+  labels:
+    tier: backend
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8000
+    targetPort: 8000
+  selector:
+    tier: backend
+# [END service]
