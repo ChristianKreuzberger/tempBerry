@@ -18,13 +18,39 @@ spec:
       containers:
       - name: tempberry-backend
         image: ckreuzberger/tempberry-backend:master
+        imagePullPolicy: Always
         # remove comment in next line to pull image from local cache
         # imagePullPolicy: Never
         ports:
         - containerPort: 8000
         env:
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              name: postgres-credentials
+              key: user
+
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-credentials
+              key: password
+
+        - name: DATABASE_NAME
+          value: "tempberry"
+
+        - name: DATABASE_HOST
+          value: "postgres"
+
+        - name: DATABASE_URL
+          value: postgres://$(DATABASE_USER):$(DATABASE_PASSWORD)@$(DATABASE_HOST)/$(DATABASE_NAME)
+
         - name: DJANGO_SETTINGS_MODULE
           value: "tempBerry.settings.live"
+        
+        - name: DJANGO_ALLOWED_HOSTS
+          value: "tempberry.k8s.chkr.at"
+
         - name: SECRET_KEY
           value: "TODO_ADD_KEY_HERE"
 

@@ -2,23 +2,35 @@ version: '3'
 volumes:
   db_files:
 services:
-  mysql:
-    image: mysql:5.5
-    container_name: db.tempberry.local
-    command: mysqld --verbose
+  # python service - runs gunicorn
+  python:
+    build:
+      context: .
+      dockerfile: docker/python/Dockerfile
+    env_file: .env
+    environment:
+      DJANGO_SETTINGS_MODULE: tempBerry.settings.dev
+      DATABASE_URL: postgres://$DATABASE_USER:$DATABASE_PASSWORD@postgres/$DATABASE_NAME
+    depends_on:
+      - postgres
+      - redis
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./app:/app/app
     ports:
-      - "3306:3306"
+      - "8000:8000"
+
+  # database
+  postgres:
+    image: postgres:10.4
     volumes:
     - ./dumps:/docker-entrypoint-initdb.d
-    - db_files:/var/lib/mysql/
+    - db_files:/var/lib/postgresql/data
     environment:
-      MYSQL_DATABASE: "tempberry"
-      MYSQL_USER: "tempberry"
-      MYSQL_PASSWORD: "tempberry"
-      MYSQL_ROOT_PASSWORD: "tempberry"
-      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      POSTGRES_DB: $DATABASE_NAME
+      POSTGRES_USER: $DATABASE_USER
+      POSTGRES_PASSWORD: $DATABASE_PASSWORD
+  
+  # redis cache
   redis:
-    hostname: redis.tempberry.local
     image: redis:2.8
-    ports:
-      - "127.0.10.1:6379:6379"

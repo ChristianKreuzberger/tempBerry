@@ -1,10 +1,18 @@
 FROM python:3.6-slim
 
-COPY . /app
+ENV PYTHONUNBUFFERED=1
+
+RUN mkdir /app
+
+COPY requirements*.txt LICENSE /app/
 WORKDIR /app
 
+# install requirements
 RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install --no-cache-dir gunicorn
+
+# copy source code
+COPY ./app /app/app
 
 EXPOSE 8000
 

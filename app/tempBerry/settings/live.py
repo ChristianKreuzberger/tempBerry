@@ -1,6 +1,4 @@
-import os
 from tempBerry.settings.base import *
 
-
+# ensure that debug is false
 DEBUG = False
-SECRET_KEY = os.getenv('SECRET_KEY')

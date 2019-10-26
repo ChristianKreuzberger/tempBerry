@@ -1,5 +1,9 @@
 from tempBerry.settings.base import *
 
+import pymysql
+
+pymysql.install_as_MySQLdb()
+
 DEBUG = True
 
 SECRET_KEY = os.getenv('SECRET_KEY', default="some_random_secret_key")

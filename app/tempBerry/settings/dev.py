@@ -1,21 +1,20 @@
 from tempBerry.settings.base import *
 
+# debugging is enabled for the dev version :)
 DEBUG = True
 
-SECRET_KEY = os.getenv('SECRET_KEY', default="some_random_secret_key")
+# automatically enable certain hosts
+CORS_ORIGIN_REGEX_WHITELIST = (
+    '^(http?://)?localhost$',  # localhost
+    '^(http?://)?127\.0\.0\.1$',  # 127.0.0.1
+    '^(http?://)?0\.0\.0\.0$',  # 0.0.0.0
+    '^(http?://)?tempberry.local:(\d+)$',  # tempberry.local:any port
+    '^(http?://)?localhost:(\d+)$',  # localhost:any port
+    '^(http?://)?127\.0\.0\.1:(\d+)$',  # 127.0.0.1:any port
+    '^(http?://)?0\.0\.0\.0:(\d+)$',  # 0.0.0.0:any port
+)
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'tempberry',
-        'USER': 'tempberry',
-        'PASSWORD': 'tempberry',
-        'HOST': '127.0.10.1',
-        'PORT': '3306'
-    }
-}
-
-# allow all hosts for now
+# allow all hosts for dev setup
 ALLOWED_HOSTS = [
     "*"
 ]

@@ -10,3 +10,5 @@ numpy==1.13.*
 django_redis
 redis<4.0
 django-cors-headers==2.4.*
+django-environ>=0.4.5,<0.5
+psycopg2-binary>=2.8.4,<2.9
