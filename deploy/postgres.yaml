@@ -35,9 +35,9 @@ spec:
               value: "tempberry"
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
-              name: postgredb
+              name: postgres-volume-mount
       volumes:
-        - name: postgredb
+        - name: postgres-volume-mount
           persistentVolumeClaim:
             claimName: postgres-pv-claim
 
