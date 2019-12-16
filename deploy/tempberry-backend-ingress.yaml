@@ -1,0 +1,13 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: "kubernetes-demo-app-ingress-service"
+spec:
+  rules:
+  - host: tempberry.somehost.com # change this domain
+    http:
+      paths:
+      # The * is needed so that all traffic gets redirected to nginx
+      - backend:
+          serviceName: tempberry-backend-service
+          servicePort: 80

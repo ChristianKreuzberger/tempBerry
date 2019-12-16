@@ -29,6 +29,7 @@ docker-compose run --rm python python manage.py createsuperuser
 Deployment Files are in the [deploy/](deploy/) subfolder.
 
 Make sure to add the **.env** file as follows:
+(todo: this is not implemented yet...)
 ```bash
 kubectl create configmap tempberry-backend-config --from-file=.env
 ```
@@ -53,7 +54,13 @@ Then apply the tempberry backend deployment yaml using
 kubectl apply -f deploy/tempberry-backend.yaml
 ```
 
-and once the pods are ready, run the migrations using
+and also apply an ingress (this requires you to have a working ingress gateway, e.g. [nginx-ingress](https://kubernetes.github.io/ingress-nginx/deploy/)):
+
+```bash
+kubectl apply -f deploy/tempberry-backend-ingress.yaml
+```
+
+Once the pods are ready, run the migrations using
 
 ```bash
 kubectl exec -it deployment/tempberry-backend python manage.py migrate
@@ -64,3 +71,4 @@ Finally, create a superuser using
 ```bash
 kubectl exec -it deployment/tempberry-backend python manage.py createsuperuser
 ```
+
