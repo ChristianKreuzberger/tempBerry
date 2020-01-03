@@ -31,4 +31,5 @@ done
 echo "WHITENOISE IS ENABLED - Collecting static files"
 python manage.py collectstatic --noinput
 
+echo "Executing $@"
 exec "$@"
