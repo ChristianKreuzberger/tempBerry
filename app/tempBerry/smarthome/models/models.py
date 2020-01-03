@@ -117,7 +117,9 @@ class Room(models.Model):
     )
 
     comment = models.TextField(
-        verbose_name=_("Comment for this room")
+        verbose_name=_("Comment for this room"),
+        default="",
+        blank=True,
     )
 
     public = models.BooleanField(
