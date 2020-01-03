@@ -1,14 +1,1 @@
-Django>=1.11,<1.12
-django-crispy-forms>=1.6.1
-django-filter>=2.1,<2.2
-djangorestframework>=3.9,<3.10
-django-userforeignkey>=0.3,<0.4
-Markdown>=2.6.7
-PyMySQL==0.7.9
-django-redis-cache>=1.7,<1.8
-numpy==1.13.*
-django_redis
-redis<4.0
-django-cors-headers==2.4.*
-django-environ>=0.4.5,<0.5
-psycopg2-binary>=2.8.4,<2.9
+-r requirements/base.txt

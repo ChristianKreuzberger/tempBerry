@@ -4,13 +4,15 @@ volumes:
 services:
   # python service - runs gunicorn
   python:
+    user: "${UID}:${GID}"
     build:
       context: .
       dockerfile: docker/python/Dockerfile
     env_file: .env
     environment:
-      DJANGO_SETTINGS_MODULE: tempBerry.settings.dev
+      DJANGO_SETTINGS_MODULE: tempBerry.settings.dev # tempBerry.settings.live for production
       DATABASE_URL: postgres://$DATABASE_USER:$DATABASE_PASSWORD@postgres/$DATABASE_NAME
+      CACHE_URL: $CACHE_URL
     depends_on:
       - postgres
       - redis
