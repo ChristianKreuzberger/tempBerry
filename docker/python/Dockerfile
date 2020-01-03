@@ -2,6 +2,9 @@ FROM python:3.6-slim
 
 ENV PYTHONUNBUFFERED=1
 
+COPY docker/python/entrypoint.sh /entrypoint.sh
+COPY docker/python/run.sh /run.sh
+
 RUN mkdir /app
 WORKDIR /app
 
@@ -20,4 +23,5 @@ EXPOSE 8000
 
 WORKDIR /app/app
 
-CMD ["gunicorn", "tempBerry.wsgi", "-b 0.0.0.0:8000"]
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["/run.sh"]

@@ -10,4 +10,9 @@ django_redis
 redis<4.0
 django-cors-headers==3.2.*
 django-environ>=0.4.5,<0.5
+
+# database connection
 psycopg2-binary>=2.8.4,<2.9
+
+# static files are hosted via whitenoise
+whitenoise>=5.0,<5.1
