@@ -4,6 +4,17 @@ dist: xenial # default is ubuntu 14.04, we need at least 16.04
 python:
   - 3.6
 
+before_install:
+  # image name
+  - IMAGE_NAME=$DOCKER_USERNAME/tempberry-backend
+  # some other build related variables
+  - DATE="$(date +'%Y%m%d.%H%M')"
+  - GIT_SHA="$(git rev-parse --short HEAD)"
+  # get current git branch name
+  - GIT_BRANCH_NAME=$(git branch | grep \* | cut -d ' ' -f2)
+  - BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
+  - echo "TRAVIS_BRANCH=$TRAVIS_BRANCH, BRANCH=$BRANCH"
+
 jobs:
   include:
     - stage: test
@@ -23,13 +34,17 @@ jobs:
         # run tests
         - python manage.py test
 
-    - stage: build
+    - stage: build and push
+      if: NOT type = pull_request
       install:
         - echo "No install needed"
       services:
         - docker
       script:
-        - docker build -f docker/python/Dockerfile -t $DOCKER_USERNAME/tempberry-backend:master .
+        - docker build -f docker/python/Dockerfile -t $IMAGE_NAME:$GIT_SHA .
       after_success:
         - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-        - docker push $DOCKER_USERNAME/tempberry-backend:master
+        - docker tag $IMAGE_NAME:$GIT_SHA $IMAGE_NAME:$BRANCH
+        - docker tag $IMAGE_NAME:$GIT_SHA $IMAGE_NAME:$BRANCH.$DATE
+        - docker tag $IMAGE_NAME:$GIT_SHA $IMAGE_NAME:$BRANCH.latest
+        - docker push $IMAGE_NAME
