@@ -11,7 +11,8 @@ class HourlyAggregatedTemperature(models.Model):
 
     room = models.ForeignKey(
         "smarthome.Room",
-        null=True
+        null=True,
+        on_delete=models.CASCADE,
     )
 
     datetime_day = models.DateField(

@@ -32,7 +32,7 @@ class SmartHome(models.Model):
 
     created_by = UserForeignKey(
         auto_user_add=True,
-        editable=False
+        editable=False,
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -71,7 +71,8 @@ class SmartHomeApiKey(models.Model):
     smarthome = models.ForeignKey(
         'smarthome.SmartHome',
         related_name='api_keys',
-        verbose_name=_("Smart Home that this API Key belongs to")
+        verbose_name=_("Smart Home that this API Key belongs to"),
+        on_delete=models.CASCADE,
     )
 
     class Meta:
@@ -80,6 +81,11 @@ class SmartHomeApiKey(models.Model):
         )
         verbose_name = _("API Key")
         verbose_name_plural = _("API Keys")
+
+    def __str__(self):
+        return "{}/{}".format(
+            self.smarthome, self.access_type
+        )
 
 
 class Room(models.Model):
@@ -95,7 +101,8 @@ class Room(models.Model):
         verbose_name=_("Smart Home that this Room belongs to"),
         blank=True,
         null=True,
-        related_name='rooms'
+        related_name='rooms',
+        on_delete=models.CASCADE,
     )
 
     name = models.CharField(
@@ -143,7 +150,7 @@ class Room(models.Model):
     )
 
     def __str__(self):
-        return self.name
+        return "{}/{}".format(self.smarthome, self.name)
 
 
 class Sensor(models.Model):
@@ -180,7 +187,8 @@ class Sensor(models.Model):
         verbose_name=_("Room that this label belongs to"),
         blank=True,
         null=True,
-        related_name='sensors'
+        related_name='sensors',
+        on_delete=models.CASCADE,
     )
 
     name = models.CharField(
@@ -235,7 +243,8 @@ class SensorIdToSensorMapping(models.Model):
 
     real_sensor = models.ForeignKey(
         "smarthome.Sensor",
-        related_name="sensor_ids"
+        related_name="sensor_ids",
+        on_delete=models.CASCADE,
     )
 
     sensor_id = models.IntegerField(

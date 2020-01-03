@@ -13,7 +13,8 @@ class RoomSensorIdMapping(models.Model):
 
     room = models.ForeignKey(
         "smarthome.Room",
-        related_name="sensor_id_mappings"
+        related_name="sensor_id_mappings",
+        on_delete=models.CASCADE,
     )
 
     sensor_id = models.IntegerField(

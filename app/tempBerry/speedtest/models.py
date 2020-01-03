@@ -9,7 +9,8 @@ class SpeedtestEntry(models.Model):
 
     smarthome = models.ForeignKey(
         'smarthome.SmartHome',
-        verbose_name=_("Smart Home that this Speedtest Entry belongs to")
+        verbose_name=_("Smart Home that this Speedtest Entry belongs to"),
+        on_delete=models.CASCADE,
     )
 
     download_speed = models.FloatField()

@@ -8,6 +8,8 @@ router = routers.DefaultRouter()
 router.register('temperatures', TemperatureDataEntryViewSet, 'temperatures')
 router.register('rooms', RoomDataViewSet, 'rooms')
 
+app_name = 'temperatures'
+
 # Wire up our API with our urls
 urlpatterns = [
     url(r'^', include(router.urls)),

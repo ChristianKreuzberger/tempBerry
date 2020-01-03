@@ -6,6 +6,8 @@ from tempBerry.binarySensor.rest.viewsets import BinarySensorDataViewSet
 router = routers.DefaultRouter()
 router.register('binary_sensors', BinarySensorDataViewSet, 'binary_sensors')
 
+app_name = 'binarySensor'
+
 # Wire up our API with our urls
 urlpatterns = [
     url(r'^', include(router.urls)),

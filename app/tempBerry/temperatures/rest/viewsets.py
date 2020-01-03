@@ -5,7 +5,7 @@ from django.db.models import Avg, Max, Min, Count
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
-from rest_framework.decorators import list_route, detail_route
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from tempBerry.smarthome.models import Room
@@ -38,7 +38,7 @@ class RoomDataViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     queryset = Room.objects.all()
 
-    @list_route(methods=['GET'])
+    @action(detail=False, methods=['GET'])
     def new_rooms(self, request):
         """
         Returns rooms that are not public, but have a lot of data
@@ -57,7 +57,7 @@ class RoomDataViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.data)
 
-    @list_route(methods=['GET'])
+    @action(detail=False, methods=['GET'])
     def latest(self, request):
         """
         Display latest data by reading the django cache last_temperature_data
@@ -90,7 +90,7 @@ class RoomDataViewSet(viewsets.ModelViewSet):
         serializer = RoomLiveDataSerializer(rooms, many=True)
         return Response(serializer.data)
 
-    @detail_route(methods=['GET'])
+    @action(detail=True, methods=['GET'])
     def stats(self, request, pk):
         """ return some stats of this room """
         # find the first and last entry of this room
@@ -114,7 +114,7 @@ class RoomDataViewSet(viewsets.ModelViewSet):
 
         return Response(data)
 
-    @detail_route(methods=['GET'])
+    @action(detail=True, methods=['GET'])
     def aggregates_24h(self, request, pk):
         end_date = timezone.now()
         start_date = end_date - timedelta(hours=24)
@@ -137,7 +137,7 @@ class RoomDataViewSet(viewsets.ModelViewSet):
 
         return Response(qs)
 
-    @detail_route(methods=['GET'])
+    @action(detail=True, methods=['GET'])
     def aggregates_1month(self, request, pk):
         end_date = timezone.now()
         start_date = end_date - timedelta(weeks=4)
