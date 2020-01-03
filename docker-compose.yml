@@ -10,15 +10,19 @@ services:
       dockerfile: docker/python/Dockerfile
     env_file: .env
     environment:
-      DJANGO_SETTINGS_MODULE: tempBerry.settings.dev # tempBerry.settings.live for production
-      DATABASE_URL: postgres://$DATABASE_USER:$DATABASE_PASSWORD@postgres/$DATABASE_NAME
+      DJANGO_SETTINGS_MODULE: tempBerry.settings.dev
+      # DJANGO_SETTINGS_MODULE: tempBerry.settings.live
+      DJANGO_ALLOWED_HOSTS: "*"
+      DATABASE_URL: postgres://$DATABASE_USER:$DATABASE_PASSWORD@$DATABASE_HOST:$DATABASE_PORT/$DATABASE_NAME
       CACHE_URL: $CACHE_URL
     depends_on:
       - postgres
       - redis
+    # uncomment the following line for development
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - ./app:/app/app
+      - ./htdocs:/app/htdocs
     ports:
       - "8000:8000"
 

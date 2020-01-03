@@ -4,9 +4,12 @@ db.sqlite3
 __pycache__
 **.pyc
 **.pyo
-htdocs/
 dumps/*.sql
 dumps/*.gz
+
+# ignore htdocs
+htdocs/*
+!htdocs/.gitkeep
 
 .env
 .env*
