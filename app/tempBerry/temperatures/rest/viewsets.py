@@ -67,7 +67,7 @@ class RoomDataViewSet(viewsets.ModelViewSet):
         cached_data = cache.get('last_temperature_data')
 
         # get queryset with public rooms only
-        rooms = self.get_queryset().filter(public=True)
+        rooms = self.get_queryset().filter(public=True).prefetch_related('smarthome')
 
         if not cached_data:
             # no cached_data available yet, pre-fill it

@@ -4,6 +4,7 @@ from django.utils import timezone
 from rest_framework import serializers
 
 from tempBerry.smarthome.models import Room
+from tempBerry.smarthome.rest.serializers import MinimalisticSmartHomeSerializer
 from tempBerry.temperatures.models import TemperatureDataEntry
 
 
@@ -37,9 +38,11 @@ class RoomLiveDataSerializer(serializers.ModelSerializer):
 
     average_last_hour = serializers.SerializerMethodField()
 
+    smarthome = MinimalisticSmartHomeSerializer(many=False)
+
     class Meta:
         model = Room
-        fields = ('id', 'name', 'comment', 'created_at', 'public', 'live_data',
+        fields = ('id', 'name', 'comment', 'created_at', 'public', 'live_data', 'smarthome',
                   'has_temperature', 'has_humidity', 'has_air_pressure', 'average_last_hour')
         read_only_fields = ('created_at', 'live_data')
 
