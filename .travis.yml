@@ -2,7 +2,7 @@ sudo: false
 language: python
 dist: xenial # default is ubuntu 14.04, we need at least 16.04
 python:
-  - 3.6
+  - 3.5
 
 before_install:
   # image name
