@@ -95,6 +95,71 @@ Finally, create a superuser using
 kubectl exec -it deployment/tempberry-backend python manage.py createsuperuser
 ```
 
+## Production Setup using SystemD
+
+This requires Python 3.5 and virtualenv to be pre-installed on your system.
+
+1. Create a new virtualenv for python 3.5 and activate it
+1. Install requirements using `pip install -r requirements.txt`
+1. Run migrations, create superuser, etc...
+1. Copy `.env.example` to a `.env` file and edit the values according to your setup
+1. Set up a systemd service unit with the following content
+    ```
+    [Unit]
+    Requires=tempberry_gunicorn.socket
+    Description=gunicorn daemon for tempberry
+    After=network.target
+     
+    [Service]
+    # make sure a runtime directory is accessible from the outside
+    RuntimeDirectoryMode=0775
+    PIDFile=%h/.%p.pid
+    # define working directory (%h = home directory)
+    WorkingDirectory=%h/tempberry/app
+    Environment="DJANGO_SETTINGS_MODULE=tempBerry.settings.live"
+    EnvironmentFile=%h/tempberry/.env
+    ExecStart=%h/tempberry/venv/bin/gunicorn --pid %h/.%p.pid --workers 4 --log-level debug --bind 127.0.1.1:5001 tempBerry.wsgi 
+    ExecReload=/bin/kill -s HUP $MAINPID
+    ExecStop=/bin/kill -s TERM $MAINPID
+    
+    
+    # security hardening
+    # see https://gist.github.com/ageis/f5595e59b1cddb1513d1b425a323db04
+    # make sure the following permissions are only applied for ExecStart, but not for ExecReload/ExecStop
+    PermissionsStartOnly=True
+    
+    NoNewPrivileges=yes
+    PrivateTmp=yes
+    ProtectSystem=strict
+    ProtectControlGroups=yes
+    RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6 AF_NETLINK
+    RestrictRealtime=yes
+    RestrictNamespaces=yes
+    MemoryDenyWriteExecute=yes
+    
+    # disabled as they cause issues with gunicorn
+    #PrivateDevices=yes
+    #DevicePolicy=closed
+     
+    [Install]
+    WantedBy=multi-user.target
+    ```
+1. Set up a systemd socket unit:
+    ```
+    [Unit]
+    Description=gunicorn socket for tempberry
+     
+    [Socket]
+    ListenStream=127.0.1.1:5001
+     
+    [Install]
+    WantedBy=sockets.target
+    ```
+
+Enable the socket and the service, and start the socket. Accesing the socket (using port 5001) should automatically 
+start the service.
+
+
 ## License
 
 The source code within this repository is made available using the MIT License. See [LICENSE](LICENSE).
