@@ -1,4 +1,4 @@
-FROM python:3.5-slim
+FROM python:3.6-slim
 
 ENV PYTHONUNBUFFERED=1
 
@@ -7,6 +7,9 @@ COPY docker/python/run.sh /run.sh
 
 RUN mkdir /app
 WORKDIR /app
+
+ARG version=develop
+ENV VERSION="${version}"
 
 # first copy requirements, readme and license file
 COPY requirements /app/requirements

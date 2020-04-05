@@ -1,20 +1,34 @@
-sudo: false
 language: python
 dist: xenial # default is ubuntu 14.04, we need at least 16.04
 python:
-  - 3.5
-
+  - 3.6
+env:
+  global:
+    - IMAGE_NAME=$DOCKER_USERNAME/tempberry-backend
 before_install:
-  # image name
-  - IMAGE_NAME=$DOCKER_USERNAME/tempberry-backend
-  # some other build related variables
-  - DATE="$(date +'%Y%m%d.%H%M')"
-  - GIT_SHA="$(git rev-parse --short HEAD)"
-  # get current git branch name
+  # get some git meta data like branch name, latest tag etc...
+  - GIT_LAST_TAG=$(git describe --tags $(git rev-list --tags --max-count=1) || echo "0.0.0")
   - GIT_BRANCH_NAME=$(git branch | grep \* | cut -d ' ' -f2)
-  - BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
-  - echo "TRAVIS_BRANCH=$TRAVIS_BRANCH, BRANCH=$BRANCH"
-
+  - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
+  - export BRANCH_SLUG=$(echo $BRANCH | iconv -t ascii//TRANSLIT | sed -r s/[^a-zA-Z0-9]+/-/g | sed -r s/^-+\|-+$//g | tr A-Z a-z)
+  - export GIT_SHA=$(git rev-parse --short HEAD)
+  # Build version string
+  - |
+    if [[ "$BRANCH" == "release-"* ]]; then
+      # extract version from branch name
+      VERSION=${BRANCH#"release-"}
+    else
+      if [[ "$BRANCH" == "$TRAVIS_TAG" ]]; then
+        # use tag as version
+        VERSION="${TRAVIS_TAG}"
+      else
+        # Development Branch - use last tag with branch name
+        VERSION="${GIT_LAST_TAG}-${BRANCH_SLUG}"
+      fi
+    fi
+  - export VERSION
+  - export DATE="$(date +'%Y%m%d')"
+  - export TIME="$(date +'%H%M')"
 jobs:
   include:
     - stage: test
@@ -34,17 +48,26 @@ jobs:
         # run tests
         - python manage.py test
 
-    - stage: build and push
+    - stage: Docker Image Build and Push
       if: NOT type = pull_request
       install:
         - echo "No install needed"
       services:
         - docker
       script:
-        - docker build -f docker/python/Dockerfile -t $IMAGE_NAME:$GIT_SHA .
+        - docker build -f docker/python/Dockerfile -t $IMAGE_NAME:$GIT_SHA --build-arg version=${VERSION} . || travis_terminate 1
       after_success:
-        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-        - docker tag $IMAGE_NAME:$GIT_SHA $IMAGE_NAME:$BRANCH
-        - docker tag $IMAGE_NAME:$GIT_SHA $IMAGE_NAME:$BRANCH.$DATE
-        - docker tag $IMAGE_NAME:$GIT_SHA $IMAGE_NAME:$BRANCH.latest
+        - docker tag $IMAGE_NAME:$GIT_SHA $IMAGE_NAME:${VERSION}
+        - docker tag $IMAGE_NAME:$GIT_SHA $IMAGE_NAME:${VERSION}-${DATE}
+        - docker tag $IMAGE_NAME:$GIT_SHA $IMAGE_NAME:${VERSION}-${DATE}.${TIME}
         - docker push $IMAGE_NAME
+      before_deploy:
+        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+      deploy:
+        provider: script
+        script: docker push "${IMAGE_NAME}"
+        on:
+          all_branches: true
+      after_deploy:
+        - echo "The following images have been built (and pushed to dockerhub):"
+        - docker images | grep "${IMAGE_NAME}"
