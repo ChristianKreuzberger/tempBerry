@@ -10,51 +10,6 @@ from django.utils.translation import ugettext_lazy as _
 from tempBerry.temperatures.models.models import TemperatureDataEntry, RoomSensorIdMapping
 
 
-@receiver(post_save, sender=TemperatureDataEntry)
-def update_last_temperature_data_in_cache(instance, created, *args, **kwargs):
-    """
-    Stores the latest temperature data in django cache
-    :param instance: TemperatureDataEntry
-    :param args:
-    :param kwargs:
-    :return:
-    """
-    # ignore instances that do not have a room_id set
-    if not instance.room_id:
-        return
-
-    # ignore updates
-    if not created:
-        return
-
-    cached_data = cache.get('last_temperature_data')
-    if not cached_data:
-        cached_data = dict()
-
-    if not instance.sensor_id:
-        # skip data without sensor id
-        return
-
-    # cache data by sensor id
-    cached_data[instance.sensor_id] = instance
-
-    now = datetime.utcnow().replace(tzinfo=utc)
-
-    keys_to_remove = []
-
-    # iterate over all data in cached_data and remove entries older than 3 hours
-    for key, entry in cached_data.items():
-        timediff = now - entry.created_at
-        seconds = timediff.total_seconds()
-        if seconds > 60*60*3:
-            keys_to_remove.append(key)
-
-    for k in keys_to_remove:
-        del cached_data[k]
-
-    cache.set('last_temperature_data', cached_data)
-
-
 @receiver(pre_save, sender=RoomSensorIdMapping)
 def verify_sensor_id_unique(instance, *args, **kwargs):
     """
@@ -139,28 +94,3 @@ def store_room_sensor_id_combination(instance, *args, **kwargs):
         # perfect match
         mapping = mapping.first()
         instance.room_id = mapping.room_id
-
-        # check if data exists in cache
-        cached_data = cache.get('last_temperature_data')
-
-        # update the cache if anything exists
-        if cached_data and instance.sensor_id in cached_data:
-            last_sensor_data = cached_data[instance.sensor_id]
-
-            # check if difference in temperature is plausible
-            if abs(last_sensor_data.temperature - instance.temperature) > 5:
-                raise ValidationError(
-                    {'temperature': ValidationError(
-                        "Temperature changed rapidly, rejecting",
-                        params={'temperature': instance.temperature},
-                        code='invalid'
-                    )}
-                )
-            elif abs(last_sensor_data.humidity - instance.humidity) > 30:
-                raise ValidationError(
-                    {'humidity': ValidationError(
-                        "Humidity changed rapidly, rejecting",
-                        params={'humidity': instance.humidity},
-                        code='invalid'
-                    )}
-                )

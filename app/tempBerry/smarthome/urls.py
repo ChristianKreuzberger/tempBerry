@@ -1,13 +1,13 @@
 from django.conf.urls import url, include
 from rest_framework import routers
 
-from tempBerry.temperatures.rest.viewsets import TemperatureDataEntryViewSet
+from tempBerry.smarthome.rest.viewsets import RoomDataViewSet
 
 # initiate router and register all endpoints
 router = routers.DefaultRouter()
-router.register('temperatures', TemperatureDataEntryViewSet, 'temperatures')
+router.register('rooms', RoomDataViewSet, 'rooms')
 
-app_name = 'temperatures'
+app_name = 'smarthome'
 
 # Wire up our API with our urls
 urlpatterns = [

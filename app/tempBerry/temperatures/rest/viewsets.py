@@ -11,7 +11,7 @@ from rest_framework.response import Response
 from tempBerry.smarthome.models import Room
 from tempBerry.smarthome.rest.serializers import RoomSerializer
 from tempBerry.temperatures.models import TemperatureDataEntry
-from tempBerry.temperatures.rest.serializers import TemperatureDataEntrySerializer, RoomLiveDataSerializer
+from tempBerry.temperatures.rest.serializers import TemperatureDataEntrySerializer
 
 
 class TemperatureDataEntryViewSet(viewsets.ModelViewSet):
@@ -37,58 +37,6 @@ class RoomDataViewSet(viewsets.ModelViewSet):
     serializer_class = RoomSerializer
     filter_backends = (DjangoFilterBackend,)
     queryset = Room.objects.all()
-
-    @action(detail=False, methods=['GET'])
-    def new_rooms(self, request):
-        """
-        Returns rooms that are not public, but have a lot of data
-        :param request:
-        :return:
-        """
-        # get all sensor IDs that have at least 10 entries
-        sensor_ids = TemperatureDataEntry.objects.values('sensor_id').annotate(
-            total=Count('sensor_id')
-        ).order_by('total').filter(total__gte=10).values_list('sensor_id', flat=True)
-
-        # get all rooms that are not public
-        rooms = self.get_queryset().filter(public=False, sensor_id_mappings__sensor_id__in=sensor_ids)
-
-        serializer = self.get_serializer(rooms, many=True)
-
-        return Response(serializer.data)
-
-    @action(detail=False, methods=['GET'])
-    def latest(self, request):
-        """
-        Display latest data by reading the django cache last_temperature_data
-        :param request:
-        :return:
-        """
-        # cached_data = cache.get('last_temperature_data')
-
-        # get queryset with public rooms only
-        rooms = self.get_queryset().filter(public=True).prefetch_related('smarthome')
-
-        if True: # not cached_data
-            # no cached_data available yet, pre-fill it
-            cached_data = {}
-            for room in rooms:
-                # check if the room actually has data
-                # get the latest entry if it is less than 12 hours old
-                data_set = room.temperaturedataentry_set.filter(
-                    created_at__gte=timezone.now() - timezone.timedelta(hours=12)
-                ).order_by('-created_at').first()
-
-                if data_set:
-                    cached_data[room.id] = data_set
-            cache.set('last_temperature_data', cached_data)
-
-        # for each room, check if there are data in cached_data
-        for room in rooms:
-            room.live_data = cached_data.get(room.id, None)
-
-        serializer = RoomLiveDataSerializer(rooms, many=True)
-        return Response(serializer.data)
 
     @action(detail=True, methods=['GET'])
     def stats(self, request, pk):

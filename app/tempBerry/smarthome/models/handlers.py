@@ -19,6 +19,7 @@ __all__ = [
     'verify_sensor_id_unique',
     'set_rooms_on_data_entries_with_sensor_id',
     'auto_set_assigned_sensor_based_on_mapping',
+    'update_last_sensor_data_in_cache',
 ]
 
 
@@ -138,3 +139,56 @@ def auto_set_assigned_sensor_based_on_mapping(instance, sender, raw, *args, **kw
     else: # len = 0
         # no match, doesnt matter -> this is either false sensor data or something else went wrong
         pass
+
+
+@receiver(post_save)
+def update_last_sensor_data_in_cache(instance, created, *args, **kwargs):
+    """
+    Stores the latest temperature data in django cache
+    :param instance:
+    :param created:
+    :param args:
+    :param kwargs:
+    :return:
+    """
+    # ignore updates
+    if not created:
+        return
+
+    from tempBerry.smarthome.models import AbstractDataEntry
+
+    if not isinstance(instance, AbstractDataEntry):
+        # not a subclass of AbstractDataEntry - ignore it
+        return
+
+    # ignore instances that do not have a room_id set
+    if not instance.room_id:
+        return
+
+    if not instance.sensor_id:
+        # skip data without sensor id
+        return
+
+    # fetch up2date last_sensor_data
+    cached_data = cache.get('last_sensor_data')
+    if not cached_data:
+        cached_data = dict()
+
+    # cache data by sensor id
+    cached_data[instance.real_sensor_id] = instance
+
+    now = datetime.utcnow().replace(tzinfo=utc)
+
+    keys_to_remove = []
+
+    # iterate over all data in cached_data and remove entries older than 3 hours
+    for key, entry in cached_data.items():
+        timediff = now - entry.created_at
+        seconds = timediff.total_seconds()
+        if seconds > 60*60*3:
+            keys_to_remove.append(key)
+
+    for k in keys_to_remove:
+        del cached_data[k]
+
+    cache.set('last_sensor_data', cached_data)
