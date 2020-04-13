@@ -43,14 +43,9 @@ class RoomDataViewSet(viewsets.ModelViewSet):
 
         # for each room, check if there are data in cached_data
         for room in rooms:
-            live_data = []
             # get all live data based on the sensors of the room
             for sensor in room.sensors.all():
-                cached_entry = cached_data.get(sensor.id, None)
-                if cached_entry:
-                    live_data.append(cached_entry)
-
-            room.live_data = live_data
+                sensor.live_data = cached_data.get(sensor.id, None)
 
         serializer = RoomSerializer(rooms, many=True)
         return Response(serializer.data)
