@@ -166,6 +166,7 @@ class Sensor(models.Model):
     SENSOR_CAMERA = 'camera'
     SENSOR_DOOR = 'door'
     SENSOR_TEMPERATURE = 'temperature'
+    SENSOR_PLANT = 'plant'
     SENSOR_WINDOW = 'window'
     SENSOR_MAIN_DOOR = 'main_door'
     SENSOR_MOVEMENT = 'movement'
@@ -176,6 +177,7 @@ class Sensor(models.Model):
         (SENSOR_CAMERA, _('Camera'), ),
         (SENSOR_DOOR, _('Door'),),
         (SENSOR_TEMPERATURE, _('Temperature'), ),
+        (SENSOR_PLANT, _('PLant'), ),
         (SENSOR_WINDOW, _('Window'), ),
         (SENSOR_MAIN_DOOR, _('Main Door'), ),
         (SENSOR_MOVEMENT, _('Movement'), ),
