@@ -14,7 +14,7 @@ from tempBerry.temperatures.models.models import TemperatureDataEntry, RoomSenso
 def update_last_temperature_data_in_cache(instance, created, *args, **kwargs):
     """
     Stores the latest temperature data in django cache
-    :param instance:
+    :param instance: TemperatureDataEntry
     :param args:
     :param kwargs:
     :return:
@@ -31,7 +31,12 @@ def update_last_temperature_data_in_cache(instance, created, *args, **kwargs):
     if not cached_data:
         cached_data = dict()
 
-    cached_data[instance.room_id] = instance
+    if not instance.sensor_id:
+        # skip data without sensor id
+        return
+
+    # cache data by sensor id
+    cached_data[instance.sensor_id] = instance
 
     now = datetime.utcnow().replace(tzinfo=utc)
 
@@ -139,10 +144,11 @@ def store_room_sensor_id_combination(instance, *args, **kwargs):
         cached_data = cache.get('last_temperature_data')
 
         # update the cache if anything exists
-        if cached_data and instance.room_id in cached_data:
-            last_room_data = cached_data[instance.room_id]
+        if cached_data and instance.sensor_id in cached_data:
+            last_sensor_data = cached_data[instance.sensor_id]
+
             # check if difference in temperature is plausible
-            if abs(last_room_data.temperature - instance.temperature) > 5:
+            if abs(last_sensor_data.temperature - instance.temperature) > 5:
                 raise ValidationError(
                     {'temperature': ValidationError(
                         "Temperature changed rapidly, rejecting",
@@ -150,7 +156,7 @@ def store_room_sensor_id_combination(instance, *args, **kwargs):
                         code='invalid'
                     )}
                 )
-            elif abs(last_room_data.humidity - instance.humidity) > 30:
+            elif abs(last_sensor_data.humidity - instance.humidity) > 30:
                 raise ValidationError(
                     {'humidity': ValidationError(
                         "Humidity changed rapidly, rejecting",

@@ -64,12 +64,12 @@ class RoomDataViewSet(viewsets.ModelViewSet):
         :param request:
         :return:
         """
-        cached_data = cache.get('last_temperature_data')
+        # cached_data = cache.get('last_temperature_data')
 
         # get queryset with public rooms only
         rooms = self.get_queryset().filter(public=True).prefetch_related('smarthome')
 
-        if not cached_data:
+        if True: # not cached_data
             # no cached_data available yet, pre-fill it
             cached_data = {}
             for room in rooms:
