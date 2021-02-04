@@ -1,6 +1,6 @@
-# Temperature Monitor for Raspberry PI (TempBerry)
+# TempBerry - Temperature Monitor for Raspberry PI
 
-[![Build Status](https://travis-ci.org/ChristianKreuzberger/tempBerry.svg?branch=master)](https://travis-ci.org/ChristianKreuzberger/tempBerry)
+[![Build Status](https://travis-ci.com/ChristianKreuzberger/tempBerry.svg?branch=master)](https://travis-ci.com/ChristianKreuzberger/tempBerry)
 
 This project contains the backend for the Raspberry PI Temperature monitor. It is written in Python (3.5+) and uses the
  following components/packages/libraries:

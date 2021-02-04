@@ -16,3 +16,6 @@ psycopg2-binary>=2.8.4,<2.9
 
 # static files are hosted via whitenoise
 whitenoise>=5.0,<5.1
+
+# monitoring
+django-prometheus>=2.1,<2.2

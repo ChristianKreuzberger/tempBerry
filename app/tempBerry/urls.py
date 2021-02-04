@@ -20,5 +20,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('tempBerry.smarthome.urls', namespace='smarthomes')),
     path('api/', include('tempBerry.temperatures.urls', namespace='temperatures')),
-    path('api/', include('tempBerry.binarySensor.urls', namespace='binarySensors'))
+    path('api/', include('tempBerry.binarySensor.urls', namespace='binarySensors')),
+    path('', include('django_prometheus.urls')),
 ]
