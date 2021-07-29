@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     'tempBerry.temperatures',
     'tempBerry.binarySensor',
     'tempBerry.aggregatedTemperatures',
+    'tempBerry.weather',
 ]
 
 MIDDLEWARE = [

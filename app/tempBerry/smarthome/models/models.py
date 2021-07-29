@@ -30,6 +30,16 @@ class SmartHome(models.Model):
         verbose_name=_("Address of the smart home (e.g., used for weather information)")
     )
 
+    latitude = models.FloatField(
+        verbose_name=_("Latitude of location of smart home (e.g., used for weather information)"),
+        null=True,
+    )
+
+    longitude = models.FloatField(
+        verbose_name=_("Longitude of location of smart home (e.g., used for weather information)"),
+        null=True,
+    )
+
     created_by = UserForeignKey(
         auto_user_add=True,
         editable=False,
