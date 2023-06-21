@@ -1,12 +1,12 @@
 Django>=2.2,<3.0
 django-crispy-forms>=1.8.1,<2.0
 django-filter>=2.2,<2.3
-djangorestframework>=3.11,<3.12
-django-userforeignkey>=0.3,<0.4
+djangorestframework>=3.12,<3.13
+django-userforeignkey>=0.4,<0.5
 Markdown>=2.6.7
 django-redis-cache>=2.1,<2.2
-numpy==1.13.*
-django_redis
+numpy==1.16.*
+django_redis<5
 redis<4.0
 django-cors-headers==3.2.*
 django-environ>=0.4.5,<0.5
