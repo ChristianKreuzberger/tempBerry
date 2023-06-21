@@ -39,8 +39,6 @@ class RoomDataViewSet(viewsets.ModelViewSet):
         # get queryset with public rooms only
         rooms = self.get_queryset()
 
-        print(cached_data)
-
         # for each room, check if there are data in cached_data
         for room in rooms:
             # get all live data based on the sensors of the room
