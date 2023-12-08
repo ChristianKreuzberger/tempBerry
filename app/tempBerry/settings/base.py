@@ -166,3 +166,16 @@ REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'tempBerry.temperatures.rest.custom_exception_handler.custom_exception_handler',
 }
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
+    },
+}
